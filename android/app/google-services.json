@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "209696384740",
+    "project_id": "max-trivia",
+    "storage_bucket": "max-trivia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209696384740:android:e7c4289bb59f08316a6ef1",
+        "android_client_info": {
+          "package_name": "com.maxshaberman.max_trivia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "209696384740-gi0lcqiu13kvtbtg0q564j13jrr8kgi2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-LZnktg6wiXn8Qz2DzG5WD3cs6o6xj0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "209696384740-gi0lcqiu13kvtbtg0q564j13jrr8kgi2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
