@@ -39,7 +39,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     } else {
       final roundComplete = data['round_complete'] as bool;
       final question = data['question'] as String;
-      final choices = data['choices'].map((e) => e as String).toList();
+      final choices = List<String>.from(data['choices']);
 
       if (roundComplete) {
         final winners = data['winners'].map((e) => e as String).toList();
@@ -73,13 +73,14 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
   void _serverQuery() {
     print('Starting queries...');
-    const duration = Duration(seconds: 20);
+    const duration = Duration(seconds: 1);
     Timer.periodic(duration, (Timer t) async => await _checkServer());
   }
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
     print('Loading game...');
     _serverQuery();
+    emit(const PregameState());
   }
 
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
@@ -92,29 +93,32 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   Future _loadQuestion(LoadQuestion event, Emitter<QuestionState> emit) async {
-    final int time;
-    if (state.startTime == 0) {
-      time = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    } else {
-      time = state.startTime;
-    }
+    if (state is PregameState) {
+      final int time;
+      if (state.startTime == 0) {
+        time = DateTime.now().millisecondsSinceEpoch - state.startTime;
+      } else {
+        time = state.startTime;
+      }
 
-    emit(PlayingState(
-      question: event.question,
-      choices: event.choices,
-      startTime: time,
-    ));
+      emit(PlayingState(
+        question: event.question,
+        choices: event.choices,
+        startTime: time,
+      ));
+    }
   }
 
   Future _selectChoice(SelectChoice event, Emitter<QuestionState> emit) async {
     final time = DateTime.now().millisecondsSinceEpoch - state.startTime;
+    print('Time: $time');
     final response = await Http.post(
       uri: '${baseUrl}answer-question',
       body: {
         'answer': event.selected,
         'time': time,
         'player_id': appBloc.state.playerId,
-        'room_code': appBloc.state.playerId,
+        'room_code': appBloc.state.roomCode,
       },
     );
 
@@ -154,5 +158,16 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
         status: status,
       ),
     );
+  }
+
+  Future _nextRound(NextRound event, Emitter<QuestionState> emit) async {
+    final response = await Http.post(
+      uri: '${baseUrl}next-round',
+      body: {
+        'room_code': appBloc.state.roomCode,
+        'host_id': appBloc.state.playerId,
+      },
+    );
+    print(response.statusCode);
   }
 }

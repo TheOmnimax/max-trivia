@@ -33,7 +33,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     final createRoomResponse = await Http.post(
       uri: '${baseUrl}create-room',
       body: {
-        'host_name': state.playerName,
+        'host_name': state.playerName == '' ? 'Host' : state.playerName,
       },
     );
     print(createRoomResponse.body);

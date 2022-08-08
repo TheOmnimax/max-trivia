@@ -46,3 +46,7 @@ class TimeUp extends QuestionEvent {
 
   final bool isWinner;
 }
+
+class NextRound extends QuestionEvent {
+  const NextRound();
+}

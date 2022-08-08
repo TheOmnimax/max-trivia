@@ -23,11 +23,20 @@ class QuestionScreen extends StatelessWidget {
 class QuestionScreenMain extends StatelessWidget {
   const QuestionScreenMain({Key? key}) : super(key: key);
 
-  List<ChoiceWidget> _getChoiceWidgets(List<String> choices) {
+  List<ChoiceWidget> _getChoiceWidgets({
+    required List<String> choices,
+    required Function(int) onSelected,
+  }) {
     final choiceWidgets = <ChoiceWidget>[];
 
-    for (final choice in choices) {
-      choiceWidgets.add(ChoiceWidget(choice: choice));
+    for (int c = 0; c < choices.length; c++) {
+      final choice = choices[c];
+      choiceWidgets.add(ChoiceWidget(
+        choice: choice,
+        onPressed: () {
+          onSelected(c);
+        },
+      ));
     }
 
     return choiceWidgets;
@@ -39,12 +48,17 @@ class QuestionScreenMain extends StatelessWidget {
       child: Scaffold(
         body: BlocBuilder<QuestionBloc, QuestionState>(
           builder: (context, state) {
-            print(state);
             if (state is LoadingState) {
               return const Text('Loading...');
             } else if (state is PregameState) {
               if (context.read<AppBloc>().state.isHost) {
-                return TextButton(onPressed: () {}, child: const Text('Start'));
+                return TextButton(
+                    onPressed: () {
+                      context.read<QuestionBloc>().add(
+                            const StartGame(),
+                          );
+                    },
+                    child: const Text('Start'));
               } else {
                 return const Text('Please wait for host to start game...');
               }
@@ -55,10 +69,22 @@ class QuestionScreenMain extends StatelessWidget {
                     child: Text(state.question),
                   ),
                   Column(
-                    children: _getChoiceWidgets(state.choices),
+                    children: _getChoiceWidgets(
+                        choices: state.choices,
+                        onSelected: (int value) {
+                          context
+                              .read<QuestionBloc>()
+                              .add(SelectChoice(selected: value));
+                        }),
                   )
                 ],
               );
+            } else if (state is CompleteState) {
+              if (context.read<AppBloc>().state.isHost) {
+                return TextButton(onPressed: () {}, child: Text('Next round'));
+              } else {
+                return Text('Please wait for next round...');
+              }
             } else {
               return Text('Invalid state');
             }
