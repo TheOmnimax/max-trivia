@@ -27,3 +27,10 @@ enum CompleteStatus {
   incorrect, // Incorrect response
   noAnswer, // Someone else selected before they could select one
 }
+
+enum JoinStatus {
+  none,
+  noName,
+  noRoomCode,
+  roomNotExists,
+}

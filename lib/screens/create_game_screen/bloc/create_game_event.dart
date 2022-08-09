@@ -24,13 +24,15 @@ class UpdateName extends CreateGameEvent {
 
 class CreateGame extends CreateGameEvent {
   const CreateGame({
+    required this.playerName,
     required this.numRounds,
     required this.categories,
   });
 
+  final String playerName;
   final int numRounds;
   final List<String> categories;
 
   @override
-  List<Object?> get props => [numRounds, categories];
+  List<Object?> get props => [playerName, numRounds, categories];
 }

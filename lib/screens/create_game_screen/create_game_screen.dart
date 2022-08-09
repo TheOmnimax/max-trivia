@@ -20,11 +20,17 @@ class CreateGameScreen extends StatelessWidget {
   }
 }
 
-class CreateGameMain extends StatelessWidget {
+class CreateGameMain extends StatefulWidget {
   const CreateGameMain({Key? key}) : super(key: key);
 
   @override
+  State<CreateGameMain> createState() => _CreateGameMainState();
+}
+
+class _CreateGameMainState extends State<CreateGameMain> {
+  @override
   Widget build(BuildContext context) {
+    String playerName = '';
     return BlocListener<CreateGameBloc, CreateGameState>(
       listener: (context, state) {
         if (state is LoadingState) {
@@ -37,17 +43,18 @@ class CreateGameMain extends StatelessWidget {
             TextInput(
                 label: 'Your name',
                 onChanged: (String value) {
-                  context.read<CreateGameBloc>().add(
-                        UpdateName(
-                          playerName: value,
-                        ),
-                      );
+                  playerName = value;
                 },
                 initialValue: ''),
             ConfirmButton(
                 onPressed: () {
-                  context.read<CreateGameBloc>().add(const CreateGame(
-                      numRounds: 5, categories: ['19g8pnv6jujxzli9']));
+                  context.read<CreateGameBloc>().add(
+                        CreateGame(
+                          numRounds: 5,
+                          categories: ['19g8pnv6jujxzli9'],
+                          playerName: playerName,
+                        ),
+                      );
                 },
                 label: 'Create')
           ],

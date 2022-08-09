@@ -20,7 +20,9 @@ class Http {
       body: encodedBody,
     );
 
-    if (response.statusCode >= 500) {
+    final statusCode = response.statusCode;
+
+    if (statusCode >= 500) {
       print('${response.statusCode} ${response.reasonPhrase}');
     }
     return response;

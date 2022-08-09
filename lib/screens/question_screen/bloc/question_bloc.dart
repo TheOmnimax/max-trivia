@@ -20,6 +20,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     on<LoadQuestion>(_loadQuestion);
     on<SelectChoice>(_selectChoice);
     on<TimeUp>(_timeUp);
+    on<NextRound>(_nextRound);
   }
 
   final AppBloc appBloc;
@@ -41,6 +42,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       final question = data['question'] as String;
       final choices = List<String>.from(data['choices']);
 
+      print('ROUND COMPLETE: $roundComplete');
       if (roundComplete) {
         final winners = data['winners'].map((e) => e as String).toList();
         final isWinner = data['is_winner'] as bool;
@@ -93,7 +95,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   Future _loadQuestion(LoadQuestion event, Emitter<QuestionState> emit) async {
-    if (state is PregameState) {
+    if ((state is PregameState) || (state is CompleteState)) {
       final int time;
       if (state.startTime == 0) {
         time = DateTime.now().millisecondsSinceEpoch - state.startTime;

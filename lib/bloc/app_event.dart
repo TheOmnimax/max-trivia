@@ -13,17 +13,24 @@ class AppOpened extends AppEvent {
 
 class AddGameInfo extends AppEvent {
   const AddGameInfo({
+    required this.playerName,
     required this.roomCode,
     required this.playerId,
     required this.isHost,
   });
 
+  final String playerName;
   final String roomCode;
   final String playerId;
   final bool isHost;
 
   @override
-  List<Object?> get props => [roomCode, playerId, isHost];
+  List<Object?> get props => [
+        playerName,
+        roomCode,
+        playerId,
+        isHost,
+      ];
 }
 
 class Login extends AppEvent {

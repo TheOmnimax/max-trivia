@@ -52,13 +52,19 @@ class QuestionScreenMain extends StatelessWidget {
               return const Text('Loading...');
             } else if (state is PregameState) {
               if (context.read<AppBloc>().state.isHost) {
-                return TextButton(
-                    onPressed: () {
-                      context.read<QuestionBloc>().add(
-                            const StartGame(),
-                          );
-                    },
-                    child: const Text('Start'));
+                return Column(
+                  children: [
+                    Text(
+                        'Room code: ${context.read<AppBloc>().state.roomCode}'),
+                    TextButton(
+                        onPressed: () {
+                          context.read<QuestionBloc>().add(
+                                const StartGame(),
+                              );
+                        },
+                        child: const Text('Start')),
+                  ],
+                );
               } else {
                 return const Text('Please wait for host to start game...');
               }
@@ -81,7 +87,11 @@ class QuestionScreenMain extends StatelessWidget {
               );
             } else if (state is CompleteState) {
               if (context.read<AppBloc>().state.isHost) {
-                return TextButton(onPressed: () {}, child: Text('Next round'));
+                return TextButton(
+                    onPressed: () {
+                      context.read<QuestionBloc>().add(NextRound());
+                    },
+                    child: Text('Next round'));
               } else {
                 return Text('Please wait for next round...');
               }

@@ -31,7 +31,9 @@ class HomePage extends StatelessWidget {
             text: 'Host',
           ),
           ScreenButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/join-game');
+            },
             text: 'Join',
           ),
         ],

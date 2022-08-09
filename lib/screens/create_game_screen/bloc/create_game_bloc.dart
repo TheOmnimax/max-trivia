@@ -45,6 +45,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
         roomCode: roomCode,
         playerId: hostId,
         isHost: true,
+        playerName: event.playerName,
       ),
     );
 

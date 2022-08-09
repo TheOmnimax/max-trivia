@@ -5,6 +5,7 @@ import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/firebase_options.dart';
 import 'package:max_trivia/screens/create_game_screen/create_game_screen.dart';
 import 'package:max_trivia/screens/home_screen/home_screen.dart';
+import 'package:max_trivia/screens/join_game_screen/join_game_screen.dart';
 import 'package:max_trivia/screens/question_screen/question_screen.dart';
 
 Future main() async {
@@ -44,7 +45,8 @@ class Main extends StatelessWidget {
       routes: {
         '/': (context) => const HomeScreen(),
         '/create-game': (context) => const CreateGameScreen(),
-        '/question-screen': (context) => const QuestionScreen()
+        '/join-game': (context) => const JoinGameScreen(),
+        '/question-screen': (context) => const QuestionScreen(),
       },
     );
   }
