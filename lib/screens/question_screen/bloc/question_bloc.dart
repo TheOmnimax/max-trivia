@@ -24,59 +24,71 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   final AppBloc appBloc;
+  Timer? timer;
 
   Future _checkServer() async {
     print('Checking server');
-    final response = await Http.post(uri: '${baseUrl}player-checkin', body: {
-      'room_code': appBloc.state.roomCode,
-      'player_id': appBloc.state.playerId,
-      'time':
-          0, // This isn't needed for this action, but it is to fit with the schema
-    });
+    final response = await Http.post(
+      uri: '${baseUrl}player-checkin',
+      body: {
+        'room_code': appBloc.state.roomCode,
+        'player_id': appBloc.state.playerId,
+        'time':
+            0, // This isn't needed for this action, but it is to fit with the schema
+      },
+    );
     final data = Http.jsonDecode(response.body);
     print(data);
     if (data.containsKey('started') && (data['started'] as bool == false)) {
       // If not yet started
     } else {
-      final roundComplete = data['round_complete'] as bool;
-      final question = data['question'] as String;
-      final choices = List<String>.from(data['choices']);
-
-      print('ROUND COMPLETE: $roundComplete');
-      if (roundComplete) {
-        final winners = data['winners'].map((e) => e as String).toList();
-        final isWinner = data['is_winner'] as bool;
-
-        emit(CompleteState(
-          question: question,
-          choices: choices,
+      print('State:');
+      print(state);
+      if (data['game_complete'] as bool) {
+        timer?.cancel();
+        emit(RoundCompleteState(
+          question: state.question,
+          choices: state.choices,
           selected: state.selected,
           startTime: 0,
           status: state.status,
         ));
+
+        await Future.delayed(Duration(seconds: 1));
+        emit(GameCompleteState());
       } else {
-        add(
-          LoadQuestion(
+        final question = data['question'] as String;
+        final choices = List<String>.from(data['choices']);
+
+        final roundComplete = data['round_complete'] as bool;
+        if (roundComplete) {
+          final winners = data['winners'].map((e) => e as String).toList();
+          final isWinner = data['is_winner'] as bool;
+
+          emit(RoundCompleteState(
             question: question,
             choices: choices,
-          ),
-        );
+            selected: state.selected,
+            startTime: 0,
+            status: state.status,
+          ));
+        } else if ((state is RoundCompleteState) || (state is PregameState)) {
+          add(
+            LoadQuestion(
+              question: question,
+              choices: choices,
+            ),
+          );
+        } else {}
       }
-      // TODO: Add other data from
-
-      // class PlayerCheckinResponse(BaseModel):
-      // question: str
-      // choices: list[str]
-      // round_complete: bool
-      // round_data: Optional[RoundData]
-      emit(state);
     }
   }
 
   void _serverQuery() {
     print('Starting queries...');
     const duration = Duration(seconds: 1);
-    Timer.periodic(duration, (Timer t) async => await _checkServer());
+
+    timer = Timer.periodic(duration, (Timer t) async => await _checkServer());
   }
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
@@ -95,7 +107,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   Future _loadQuestion(LoadQuestion event, Emitter<QuestionState> emit) async {
-    if ((state is PregameState) || (state is CompleteState)) {
+    if ((state is PregameState) || (state is RoundCompleteState)) {
       final int time;
       if (state.startTime == 0) {
         time = DateTime.now().millisecondsSinceEpoch - state.startTime;
@@ -134,7 +146,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     }
 
     emit(
-      CompleteState(
+      RoundCompleteState(
         question: state.question,
         choices: state.choices,
         selected: state.selected,
@@ -152,7 +164,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       status = state.status;
     }
     emit(
-      CompleteState(
+      RoundCompleteState(
         question: state.question,
         choices: state.choices,
         selected: state.selected,

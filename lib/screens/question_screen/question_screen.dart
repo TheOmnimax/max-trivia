@@ -46,7 +46,12 @@ class QuestionScreenMain extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: BlocBuilder<QuestionBloc, QuestionState>(
+        body: BlocConsumer<QuestionBloc, QuestionState>(
+          listener: (context, state) {
+            if (state is GameCompleteState) {
+              Navigator.popAndPushNamed(context, '/game-complete');
+            }
+          },
           builder: (context, state) {
             if (state is LoadingState) {
               return const Text('Loading...');
@@ -85,7 +90,7 @@ class QuestionScreenMain extends StatelessWidget {
                   )
                 ],
               );
-            } else if (state is CompleteState) {
+            } else if (state is RoundCompleteState) {
               if (context.read<AppBloc>().state.isHost) {
                 return TextButton(
                     onPressed: () {
@@ -95,6 +100,8 @@ class QuestionScreenMain extends StatelessWidget {
               } else {
                 return Text('Please wait for next round...');
               }
+            } else if (state is GameCompleteState) {
+              return Text('Getting results...');
             } else {
               return Text('Invalid state');
             }

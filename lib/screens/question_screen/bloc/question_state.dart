@@ -86,8 +86,23 @@ class PlayingState extends QuestionState {
   }
 }
 
-class CompleteState extends QuestionState {
-  const CompleteState({
+class AnsweredQuestionState extends QuestionState {
+  const AnsweredQuestionState({
+    required String question,
+    required List<String> choices,
+    required int selected,
+    required int startTime,
+  }) : super(
+          question: question,
+          choices: choices,
+          selected: selected,
+          startTime: startTime,
+          status: CompleteStatus.answered,
+        );
+}
+
+class RoundCompleteState extends QuestionState {
+  const RoundCompleteState({
     required String question,
     required List<String> choices,
     required int selected,
@@ -102,14 +117,14 @@ class CompleteState extends QuestionState {
         );
 
   @override
-  CompleteState copyWith({
+  RoundCompleteState copyWith({
     String? question,
     List<String>? choices,
     int? selected,
     int? startTime,
     CompleteStatus? status,
   }) {
-    return CompleteState(
+    return RoundCompleteState(
       question: question ?? this.question,
       choices: choices ?? this.choices,
       selected: selected ?? this.selected,
@@ -118,3 +133,20 @@ class CompleteState extends QuestionState {
     );
   }
 }
+
+class GameCompleteState extends QuestionState {
+  const GameCompleteState()
+      : super(
+          question: '',
+          choices: const [],
+          selected: -1,
+          startTime: 0,
+          status: CompleteStatus.answered,
+        );
+
+  GameCompleteState copyWith() {
+    return const GameCompleteState();
+  }
+}
+
+// TODO: Add state that loads game complete screen
