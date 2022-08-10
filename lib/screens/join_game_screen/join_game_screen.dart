@@ -31,12 +31,12 @@ class _JoinGameMainState extends State<JoinGameMain> {
   Widget build(BuildContext context) {
     String name = '';
     String roomCode = '';
-    final _nameKey = GlobalKey<FormState>();
+    final nameKey = GlobalKey<FormState>();
 
     return BlocListener<JoinGameBloc, JoinGameState>(
       listener: (context, state) {
-        if (state is JoiningState) {
-        } else if (state is LoadingState) {
+        nameKey.currentState!.validate();
+        if (state is LoadingState) {
           context.read<AppBloc>().add(
                 AddGameInfo(
                   playerName: state.playerName,
@@ -45,11 +45,12 @@ class _JoinGameMainState extends State<JoinGameMain> {
                   isHost: false,
                 ),
               );
+          Navigator.pushNamed(context, '/question-screen');
         }
       },
       child: DefaultScaffold(
         child: Form(
-          key: _nameKey,
+          key: nameKey,
           child: Column(
             children: [
               TextInput(
@@ -72,26 +73,25 @@ class _JoinGameMainState extends State<JoinGameMain> {
                   if (value == '') {
                     return 'Room code cannot be blank!';
                   } else {
-                    context.read<JoinGameBloc>().add(
-                          JoinGame(
-                            name: name,
-                            roomCode: roomCode,
-                          ),
-                        );
-                    if (context.read<JoinGameBloc>().state.joinStatus ==
-                        JoinStatus.roomNotExists) {
+                    final joinGameState = context.read<JoinGameBloc>().state;
+                    if (joinGameState.joinStatus == JoinStatus.roomNotExists) {
                       return 'Room not found';
                     }
-                    Navigator.pushNamed(context, '/question-screen');
                   }
                 },
               ),
               ConfirmButton(
                 onPressed: () {
                   print('About to confirm');
-                  print(_nameKey);
-                  print(_nameKey.currentState);
-                  if (_nameKey.currentState!.validate()) {}
+                  context.read<JoinGameBloc>().add(
+                        JoinGame(
+                          name: name,
+                          roomCode: roomCode,
+                        ),
+                      );
+                  print(nameKey);
+                  print(nameKey.currentState);
+                  if (nameKey.currentState!.validate()) {}
                 },
                 label: 'Join',
               ),

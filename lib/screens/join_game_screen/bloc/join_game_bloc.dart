@@ -42,7 +42,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
         roomCode: event.roomCode,
         playerId: playerId,
         playerName: event.name,
-        joinStatus: state.joinStatus,
+        joinStatus: JoinStatus.joined,
       ));
     }
   }
