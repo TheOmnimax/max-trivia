@@ -5,15 +5,19 @@ abstract class QuestionState extends Equatable {
     required this.question,
     required this.choices,
     required this.selected,
+    // required this.correct,
     required this.startTime,
-    required this.status,
+    required this.answerStatus,
+    required this.roundStatus,
   });
 
   final String question;
   final List<String> choices;
   final int selected;
+  // final int correct;
   final int startTime;
-  final CompleteStatus status;
+  final AnswerStatus answerStatus;
+  final RoundStatus roundStatus;
 
   @override
   List<Object?> get props => [
@@ -21,10 +25,17 @@ abstract class QuestionState extends Equatable {
         choices,
         selected,
         startTime,
-        status,
+        answerStatus,
+        roundStatus,
       ];
 
-  QuestionState copyWith();
+  QuestionState copyWith(
+      {String? question,
+      List<String>? choices,
+      int? selected,
+      int? startTime,
+      AnswerStatus? answerStatus,
+      RoundStatus? roundStatus});
 }
 
 class LoadingState extends QuestionState {
@@ -34,11 +45,19 @@ class LoadingState extends QuestionState {
           choices: const [],
           selected: -1,
           startTime: 0,
-          status: CompleteStatus.noAnswer,
+          answerStatus: AnswerStatus.noAnswer,
+          roundStatus: RoundStatus.waiting,
         );
 
   @override
-  LoadingState copyWith() {
+  LoadingState copyWith({
+    String? question,
+    List<String>? choices,
+    int? selected,
+    int? startTime,
+    AnswerStatus? answerStatus,
+    RoundStatus? roundStatus,
+  }) {
     return const LoadingState();
   }
 }
@@ -50,11 +69,19 @@ class PregameState extends QuestionState {
           choices: const [],
           selected: -1,
           startTime: 0,
-          status: CompleteStatus.noAnswer,
+          answerStatus: AnswerStatus.noAnswer,
+          roundStatus: RoundStatus.waiting,
         );
 
   @override
-  PregameState copyWith() {
+  PregameState copyWith({
+    String? question,
+    List<String>? choices,
+    int? selected,
+    int? startTime,
+    AnswerStatus? answerStatus,
+    RoundStatus? roundStatus,
+  }) {
     return const PregameState();
   }
 }
@@ -63,73 +90,35 @@ class PlayingState extends QuestionState {
   const PlayingState({
     required String question,
     required List<String> choices,
+    required int selected,
     required int startTime,
+    required AnswerStatus answerStatus,
+    required RoundStatus roundStatus,
   }) : super(
           question: question,
           choices: choices,
-          selected: -1,
+          selected: selected,
           startTime: startTime,
-          status: CompleteStatus.noAnswer,
+          answerStatus: answerStatus,
+          roundStatus: roundStatus,
         );
 
   @override
   PlayingState copyWith({
     String? question,
     List<String>? choices,
+    int? selected,
     int? startTime,
+    AnswerStatus? answerStatus,
+    RoundStatus? roundStatus,
   }) {
     return PlayingState(
       question: question ?? this.question,
       choices: choices ?? this.choices,
-      startTime: startTime ?? this.startTime,
-    );
-  }
-}
-
-class AnsweredQuestionState extends QuestionState {
-  const AnsweredQuestionState({
-    required String question,
-    required List<String> choices,
-    required int selected,
-    required int startTime,
-  }) : super(
-          question: question,
-          choices: choices,
-          selected: selected,
-          startTime: startTime,
-          status: CompleteStatus.answered,
-        );
-}
-
-class RoundCompleteState extends QuestionState {
-  const RoundCompleteState({
-    required String question,
-    required List<String> choices,
-    required int selected,
-    required CompleteStatus status,
-    required int startTime,
-  }) : super(
-          question: question,
-          choices: choices,
-          selected: selected,
-          startTime: startTime,
-          status: status,
-        );
-
-  @override
-  RoundCompleteState copyWith({
-    String? question,
-    List<String>? choices,
-    int? selected,
-    int? startTime,
-    CompleteStatus? status,
-  }) {
-    return RoundCompleteState(
-      question: question ?? this.question,
-      choices: choices ?? this.choices,
       selected: selected ?? this.selected,
       startTime: startTime ?? this.startTime,
-      status: status ?? this.status,
+      answerStatus: answerStatus ?? this.answerStatus,
+      roundStatus: roundStatus ?? this.roundStatus,
     );
   }
 }
@@ -141,10 +130,18 @@ class GameCompleteState extends QuestionState {
           choices: const [],
           selected: -1,
           startTime: 0,
-          status: CompleteStatus.answered,
+          answerStatus: AnswerStatus.answered,
+          roundStatus: RoundStatus.waiting,
         );
 
-  GameCompleteState copyWith() {
+  GameCompleteState copyWith({
+    String? question,
+    List<String>? choices,
+    int? selected,
+    int? startTime,
+    AnswerStatus? answerStatus,
+    RoundStatus? roundStatus,
+  }) {
     return const GameCompleteState();
   }
 }

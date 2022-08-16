@@ -20,7 +20,8 @@ enum TriviaStatus {
   waiting, // Time has run out
 }
 
-enum CompleteStatus {
+enum AnswerStatus {
+  waiting, // No answer yet, still a chance to answer
   answered, // Selected a choice, but no response from server yet
   winner, // Won the round
   correct, // Correct, but not the best time, or don't know yet
@@ -28,9 +29,16 @@ enum CompleteStatus {
   noAnswer, // Someone else selected before they could select one
 }
 
+enum RoundStatus {
+  playing,
+  answered,
+  waiting, // Round is complete, waiting for the next round
+}
+
 enum JoinStatus {
   none,
   noName,
   noRoomCode,
   roomNotExists,
+  joined,
 }

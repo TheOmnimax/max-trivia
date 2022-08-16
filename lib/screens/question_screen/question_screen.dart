@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
+import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/screens/question_screen/bloc/question_bloc.dart';
 
 part 'choice_widget.dart';
@@ -74,36 +75,43 @@ class QuestionScreenMain extends StatelessWidget {
                 return const Text('Please wait for host to start game...');
               }
             } else if (state is PlayingState) {
-              return Column(
-                children: [
-                  Container(
-                    child: Text(state.question),
-                  ),
-                  Column(
-                    children: _getChoiceWidgets(
-                        choices: state.choices,
-                        onSelected: (int value) {
-                          context
-                              .read<QuestionBloc>()
-                              .add(SelectChoice(selected: value));
-                        }),
-                  )
-                ],
-              );
-            } else if (state is RoundCompleteState) {
-              if (context.read<AppBloc>().state.isHost) {
-                return TextButton(
-                    onPressed: () {
-                      context.read<QuestionBloc>().add(NextRound());
-                    },
-                    child: Text('Next round'));
+              if (state.roundStatus == RoundStatus.playing) {
+                return Column(
+                  children: [
+                    Container(
+                      child: Text(state.question),
+                    ),
+                    Column(
+                      children: _getChoiceWidgets(
+                          choices: state.choices,
+                          onSelected: (int value) {
+                            context
+                                .read<QuestionBloc>()
+                                .add(SelectChoice(selected: value));
+                          }),
+                    )
+                  ],
+                );
+              } else if (state.roundStatus == RoundStatus.answered) {
+                return Text(
+                    'Please wait for the other players to finish up...');
+              } else if (state.roundStatus == RoundStatus.waiting) {
+                if (context.read<AppBloc>().state.isHost) {
+                  return TextButton(
+                      onPressed: () {
+                        context.read<QuestionBloc>().add(NextRound());
+                      },
+                      child: Text('Next round'));
+                } else {
+                  return Text('Please wait for next round...');
+                }
               } else {
-                return Text('Please wait for next round...');
+                return Text('Invalid round status: ${state.roundStatus}');
               }
             } else if (state is GameCompleteState) {
-              return Text('Getting results...');
+              return Text('Please wait for results...');
             } else {
-              return Text('Invalid state');
+              return Text('Invalid state: $state');
             }
           },
         ),

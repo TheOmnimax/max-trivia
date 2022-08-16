@@ -39,14 +39,23 @@ class SelectChoice extends QuestionEvent {
   List<Object?> get props => [selected];
 }
 
+class StartRound extends QuestionEvent {
+  // Got message from server to start round
+  const StartRound();
+}
+
 class TimeUp extends QuestionEvent {
   const TimeUp({
-    required this.isWinner,
+    required this.status,
   });
 
-  final bool isWinner;
+  final AnswerStatus status;
 }
 
 class NextRound extends QuestionEvent {
   const NextRound();
+}
+
+class GameComplete extends QuestionEvent {
+  const GameComplete();
 }

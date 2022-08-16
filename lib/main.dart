@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/firebase_options.dart';
 import 'package:max_trivia/screens/create_game_screen/create_game_screen.dart';
+import 'package:max_trivia/screens/game_complete_screen/game_complete_screen.dart';
 import 'package:max_trivia/screens/home_screen/home_screen.dart';
 import 'package:max_trivia/screens/join_game_screen/join_game_screen.dart';
 import 'package:max_trivia/screens/question_screen/question_screen.dart';
@@ -47,6 +48,7 @@ class Main extends StatelessWidget {
         '/create-game': (context) => const CreateGameScreen(),
         '/join-game': (context) => const JoinGameScreen(),
         '/question-screen': (context) => const QuestionScreen(),
+        '/game-complete': (context) => const GameCompleteScreen()
       },
     );
   }
