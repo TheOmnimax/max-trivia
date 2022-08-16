@@ -46,7 +46,7 @@ class LoadingState extends QuestionState {
           selected: -1,
           startTime: 0,
           answerStatus: AnswerStatus.noAnswer,
-          roundStatus: RoundStatus.waiting,
+          roundStatus: RoundStatus.ready,
         );
 
   @override
@@ -63,14 +63,15 @@ class LoadingState extends QuestionState {
 }
 
 class PregameState extends QuestionState {
-  const PregameState()
-      : super(
+  const PregameState({
+    required RoundStatus roundStatus,
+  }) : super(
           question: '',
           choices: const [],
           selected: -1,
           startTime: 0,
           answerStatus: AnswerStatus.noAnswer,
-          roundStatus: RoundStatus.waiting,
+          roundStatus: roundStatus,
         );
 
   @override
@@ -82,7 +83,7 @@ class PregameState extends QuestionState {
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
   }) {
-    return const PregameState();
+    return PregameState(roundStatus: roundStatus ?? this.roundStatus);
   }
 }
 
@@ -131,7 +132,7 @@ class GameCompleteState extends QuestionState {
           selected: -1,
           startTime: 0,
           answerStatus: AnswerStatus.answered,
-          roundStatus: RoundStatus.waiting,
+          roundStatus: RoundStatus.ready,
         );
 
   GameCompleteState copyWith({

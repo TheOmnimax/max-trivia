@@ -56,7 +56,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
           status: AnswerStatus.winner,
         )); // TODO: Update with checks from the server to see if they were really the winner
       }
-    } else if (state.roundStatus == RoundStatus.waiting) {
+    } else if (state.roundStatus == RoundStatus.ready) {
       final question = data['question'] as String;
       final choices = List<String>.from(data['choices']);
       add(LoadQuestion(
@@ -74,10 +74,15 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
     _serverQuery();
-    emit(const PregameState());
+    emit(PregameState(
+      roundStatus: RoundStatus.answered,
+    ));
   }
 
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
+    emit(const PregameState(
+      roundStatus: RoundStatus.ready,
+    ));
     final response = await Http.post(uri: '${baseUrl}start-game', body: {
       'room_code': appBloc.state.roomCode,
       'host_id': appBloc.state.playerId,
@@ -137,7 +142,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     emit(
       state.copyWith(
         answerStatus: event.status,
-        roundStatus: RoundStatus.waiting,
+        roundStatus: RoundStatus.ready,
       ),
     );
   }

@@ -32,7 +32,7 @@ enum AnswerStatus {
 enum RoundStatus {
   playing,
   answered,
-  waiting, // Round is complete, waiting for the next round
+  ready, // Round is complete, waiting for the next round
 }
 
 enum JoinStatus {

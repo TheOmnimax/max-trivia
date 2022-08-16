@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/screens/create_game_screen/bloc/create_game_bloc.dart';
 import 'package:max_trivia/shared_widgets/form_input.dart';
+import 'package:max_trivia/shared_widgets/loading.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
 
 import '../../bloc/app_bloc.dart';
@@ -34,7 +35,8 @@ class _CreateGameMainState extends State<CreateGameMain> {
     return BlocListener<CreateGameBloc, CreateGameState>(
       listener: (context, state) {
         if (state is LoadingState) {
-          Navigator.pushNamed(context, '/question-screen');
+          Navigator.popAndPushNamed(
+              context, '/question-screen'); // Pop is for the loading dialog
         }
       },
       child: DefaultScaffold(
@@ -47,7 +49,17 @@ class _CreateGameMainState extends State<CreateGameMain> {
                 },
                 initialValue: ''),
             ConfirmButton(
-                onPressed: () {
+                onPressed: () async {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const SimpleDialog(
+                          title: Text('Loading...'),
+                          children: [
+                            bigLoading,
+                          ],
+                        );
+                      });
                   context.read<CreateGameBloc>().add(
                         CreateGame(
                           numRounds: 5,
