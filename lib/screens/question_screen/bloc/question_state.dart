@@ -5,7 +5,7 @@ abstract class QuestionState extends Equatable {
     required this.question,
     required this.choices,
     required this.selected,
-    // required this.correct,
+    required this.correct,
     required this.startTime,
     required this.answerStatus,
     required this.roundStatus,
@@ -14,7 +14,7 @@ abstract class QuestionState extends Equatable {
   final String question;
   final List<String> choices;
   final int selected;
-  // final int correct;
+  final int correct;
   final int startTime;
   final AnswerStatus answerStatus;
   final RoundStatus roundStatus;
@@ -24,6 +24,7 @@ abstract class QuestionState extends Equatable {
         question,
         choices,
         selected,
+        correct,
         startTime,
         answerStatus,
         roundStatus,
@@ -33,6 +34,7 @@ abstract class QuestionState extends Equatable {
       {String? question,
       List<String>? choices,
       int? selected,
+      int? correct,
       int? startTime,
       AnswerStatus? answerStatus,
       RoundStatus? roundStatus});
@@ -44,6 +46,7 @@ class LoadingState extends QuestionState {
           question: '',
           choices: const [],
           selected: -1,
+          correct: -1,
           startTime: 0,
           answerStatus: AnswerStatus.noAnswer,
           roundStatus: RoundStatus.ready,
@@ -54,6 +57,7 @@ class LoadingState extends QuestionState {
     String? question,
     List<String>? choices,
     int? selected,
+    int? correct,
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
@@ -69,6 +73,7 @@ class PregameState extends QuestionState {
           question: '',
           choices: const [],
           selected: -1,
+          correct: -1,
           startTime: 0,
           answerStatus: AnswerStatus.noAnswer,
           roundStatus: roundStatus,
@@ -79,6 +84,7 @@ class PregameState extends QuestionState {
     String? question,
     List<String>? choices,
     int? selected,
+    int? correct,
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
@@ -92,6 +98,7 @@ class PlayingState extends QuestionState {
     required String question,
     required List<String> choices,
     required int selected,
+    required int correct,
     required int startTime,
     required AnswerStatus answerStatus,
     required RoundStatus roundStatus,
@@ -99,6 +106,7 @@ class PlayingState extends QuestionState {
           question: question,
           choices: choices,
           selected: selected,
+          correct: correct,
           startTime: startTime,
           answerStatus: answerStatus,
           roundStatus: roundStatus,
@@ -109,6 +117,7 @@ class PlayingState extends QuestionState {
     String? question,
     List<String>? choices,
     int? selected,
+    int? correct,
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
@@ -117,6 +126,7 @@ class PlayingState extends QuestionState {
       question: question ?? this.question,
       choices: choices ?? this.choices,
       selected: selected ?? this.selected,
+      correct: correct ?? this.correct,
       startTime: startTime ?? this.startTime,
       answerStatus: answerStatus ?? this.answerStatus,
       roundStatus: roundStatus ?? this.roundStatus,
@@ -130,6 +140,7 @@ class GameCompleteState extends QuestionState {
           question: '',
           choices: const [],
           selected: -1,
+          correct: -1,
           startTime: 0,
           answerStatus: AnswerStatus.answered,
           roundStatus: RoundStatus.ready,
@@ -139,6 +150,7 @@ class GameCompleteState extends QuestionState {
     String? question,
     List<String>? choices,
     int? selected,
+    int? correct,
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
@@ -146,5 +158,3 @@ class GameCompleteState extends QuestionState {
     return const GameCompleteState();
   }
 }
-
-// TODO: Add state that loads game complete screen

@@ -47,9 +47,14 @@ class StartRound extends QuestionEvent {
 class TimeUp extends QuestionEvent {
   const TimeUp({
     required this.status,
+    required this.correct,
   });
 
   final AnswerStatus status;
+  final int correct;
+
+  @override
+  List<Object?> get props => [status, correct];
 }
 
 class NextRound extends QuestionEvent {

@@ -27,17 +27,24 @@ class QuestionScreenMain extends StatelessWidget {
   List<ChoiceWidget> _getChoiceWidgets({
     required List<String> choices,
     required Function(int) onSelected,
+    int selected = -1,
+    int correct = -1,
   }) {
     final choiceWidgets = <ChoiceWidget>[];
 
     for (int c = 0; c < choices.length; c++) {
       final choice = choices[c];
-      choiceWidgets.add(ChoiceWidget(
-        choice: choice,
-        onPressed: () {
-          onSelected(c);
-        },
-      ));
+      choiceWidgets.add(
+        ChoiceWidget(
+          choice: choice,
+          onPressed: () {
+            onSelected(c);
+          },
+          choiceValue: c,
+          selected: selected,
+          correct: correct,
+        ),
+      );
     }
 
     return choiceWidgets;
@@ -82,31 +89,35 @@ class QuestionScreenMain extends StatelessWidget {
                 return Text('Invalid round status: ${state.roundStatus}');
               }
             } else if (state is PlayingState) {
-              if (state.roundStatus == RoundStatus.playing) {
-                return Column(
-                  children: [
-                    Container(
-                      child: Text(state.question),
+              return Column(
+                children: [
+                  Container(
+                    child: Text(state.question),
+                  ),
+                  Column(
+                    children: _getChoiceWidgets(
+                      choices: state.choices,
+                      onSelected: (int value) {
+                        context
+                            .read<QuestionBloc>()
+                            .add(SelectChoice(selected: value));
+                      },
+                      selected: state.selected,
+                      correct: state.correct,
                     ),
-                    Column(
-                      children: _getChoiceWidgets(
-                          choices: state.choices,
-                          onSelected: (int value) {
-                            context
-                                .read<QuestionBloc>()
-                                .add(SelectChoice(selected: value));
-                          }),
-                    )
-                  ],
-                );
-              } else if (state.roundStatus == RoundStatus.answered) {
-                return Text(
-                    'Please wait for the other players to finish up...');
-              } else if (state.roundStatus == RoundStatus.ready) {
-                return Text('Please wait for next round...');
-              } else {
-                return Text('Invalid round status: ${state.roundStatus}');
-              }
+                  ),
+                  Builder(builder: (context) {
+                    if (state.roundStatus == RoundStatus.answered) {
+                      return Text(
+                          'Please wait for the other players to finish up...');
+                    } else if (state.roundStatus == RoundStatus.ready) {
+                      return Text('Please wait for next round...');
+                    } else {
+                      return Text('');
+                    }
+                  }),
+                ],
+              );
             } else if (state is GameCompleteState) {
               return Text('Please wait for results...');
             } else {

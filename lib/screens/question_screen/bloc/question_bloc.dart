@@ -49,12 +49,21 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       add(const GameComplete());
     } else if (data['round_complete'] as bool) {
       final roundStatus = state.roundStatus;
+      final correct = data['correct'] as int;
       if (roundStatus == RoundStatus.playing) {
-        add(const TimeUp(status: AnswerStatus.noAnswer));
+        add(
+          TimeUp(
+            status: AnswerStatus.noAnswer,
+            correct: correct,
+          ),
+        );
       } else if (roundStatus == RoundStatus.answered) {
-        add(const TimeUp(
-          status: AnswerStatus.winner,
-        )); // TODO: Update with checks from the server to see if they were really the winner
+        add(
+          TimeUp(
+            status: AnswerStatus.winner,
+            correct: correct,
+          ),
+        ); // TODO: Update with checks from the server to see if they were really the winner
       }
     } else if (state.roundStatus == RoundStatus.ready) {
       final question = data['question'] as String;
@@ -106,12 +115,14 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       answerStatus: AnswerStatus.waiting,
       roundStatus: RoundStatus.playing,
       selected: -1,
+      correct: -1,
     ));
   }
 
   Future _selectChoice(SelectChoice event, Emitter<QuestionState> emit) async {
     emit(state.copyWith(
       roundStatus: RoundStatus.answered,
+      selected: event.selected,
     ));
     final time = DateTime.now().millisecondsSinceEpoch - state.startTime;
     final response = await Http.post(
@@ -143,6 +154,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       state.copyWith(
         answerStatus: event.status,
         roundStatus: RoundStatus.ready,
+        correct: event.correct,
       ),
     );
   }
