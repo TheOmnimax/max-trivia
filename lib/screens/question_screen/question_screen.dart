@@ -103,15 +103,7 @@ class QuestionScreenMain extends StatelessWidget {
                 return Text(
                     'Please wait for the other players to finish up...');
               } else if (state.roundStatus == RoundStatus.ready) {
-                if (context.read<AppBloc>().state.isHost) {
-                  return TextButton(
-                      onPressed: () {
-                        context.read<QuestionBloc>().add(NextRound());
-                      },
-                      child: Text('Next round'));
-                } else {
-                  return Text('Please wait for next round...');
-                }
+                return Text('Please wait for next round...');
               } else {
                 return Text('Invalid round status: ${state.roundStatus}');
               }
