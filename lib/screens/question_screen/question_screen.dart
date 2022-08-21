@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
+import 'package:max_trivia/screens/game_complete_screen/game_complete_screen.dart';
 import 'package:max_trivia/screens/question_screen/bloc/question_bloc.dart';
+import 'package:max_trivia/utils/navigation.dart';
 
 part 'choice_widget.dart';
 
@@ -57,7 +59,10 @@ class QuestionScreenMain extends StatelessWidget {
         body: BlocConsumer<QuestionBloc, QuestionState>(
           listener: (context, state) {
             if (state is GameCompleteState) {
-              Navigator.popAndPushNamed(context, '/game-complete');
+              newScreen(
+                context: context,
+                screen: const GameCompleteScreen(),
+              );
             }
           },
           builder: (context, state) {

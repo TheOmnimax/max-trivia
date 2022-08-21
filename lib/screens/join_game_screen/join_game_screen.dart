@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
+import 'package:max_trivia/screens/question_screen/question_screen.dart';
 import 'package:max_trivia/shared_widgets/form_input.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
 
+import 'package:max_trivia/utils/navigation.dart';
 import 'bloc/join_game_bloc.dart';
 
 class JoinGameScreen extends StatelessWidget {
@@ -45,7 +47,10 @@ class _JoinGameMainState extends State<JoinGameMain> {
                   isHost: false,
                 ),
               );
-          Navigator.pushNamed(context, '/question-screen');
+          newScreen(
+            context: context,
+            screen: const QuestionScreen(),
+          );
         }
       },
       child: DefaultScaffold(
