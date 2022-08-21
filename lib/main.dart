@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Starting...');
     return BlocProvider(
       create: (_) => AppBloc()..add(const AppOpened()),
       child: const Main(),

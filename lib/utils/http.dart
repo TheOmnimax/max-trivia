@@ -10,9 +10,6 @@ class Http {
     required Map<String, dynamic> body,
     //TODO: Add way to add additional headers
   }) async {
-    print('Running request to $uri');
-    print('Body:');
-    print(body);
     final encodedBody = json.encode(body);
     final response = await http.post(
       Uri.parse(uri),

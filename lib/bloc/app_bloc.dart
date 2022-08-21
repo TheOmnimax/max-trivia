@@ -33,14 +33,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _addGameInfo(AddGameInfo event, Emitter<AppState> emit) {
-    print('Adding game info');
     emit(state.copyWith(
       playerId: event.playerId,
       roomCode: event.roomCode,
       isHost: event.isHost,
     ));
-    print(state.playerId);
-    print(state.roomCode);
   }
 
   Future _appOpened(AppOpened event, Emitter<AppState> emit) async {
