@@ -48,13 +48,19 @@ class TimeUp extends QuestionEvent {
   const TimeUp({
     required this.status,
     required this.correct,
+    this.gameComplete = false,
   });
 
   final AnswerStatus status;
   final int correct;
+  final bool gameComplete;
 
   @override
-  List<Object?> get props => [status, correct];
+  List<Object?> get props => [
+        status,
+        correct,
+        gameComplete,
+      ];
 }
 
 class NextRound extends QuestionEvent {
