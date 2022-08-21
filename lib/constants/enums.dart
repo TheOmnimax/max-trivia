@@ -31,7 +31,7 @@ enum AnswerStatus {
 
 enum RoundStatus {
   playing,
-  answered,
+  answered, // Either already answered the question and waiting for the round to complete, or is the host, and ready to start the game
   ready, // Round is complete, waiting for the next round
 }
 

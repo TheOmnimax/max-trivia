@@ -23,9 +23,6 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
         'player_name': event.name,
       },
     );
-
-    print(response);
-
     final statusCode = response.statusCode;
 
     if (statusCode >= 500) {

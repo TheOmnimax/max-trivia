@@ -82,15 +82,12 @@ class _JoinGameMainState extends State<JoinGameMain> {
               ),
               ConfirmButton(
                 onPressed: () {
-                  print('About to confirm');
                   context.read<JoinGameBloc>().add(
                         JoinGame(
                           name: name,
                           roomCode: roomCode,
                         ),
                       );
-                  print(nameKey);
-                  print(nameKey.currentState);
                   if (nameKey.currentState!.validate()) {}
                 },
                 label: 'Join',

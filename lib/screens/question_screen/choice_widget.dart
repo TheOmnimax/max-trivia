@@ -31,11 +31,18 @@ class ChoiceWidget extends StatelessWidget {
       );
     } else if ((selected == choiceValue) && (correct == choiceValue)) {
       // Player selected correct choice
-      return Text(
-        '$choice ✓', // TODO: Add better checkmark
-        style: const TextStyle(
-          fontSize: 30.0,
-          backgroundColor: Colors.green,
+      return Container(
+        color: Colors.green,
+        child: Row(
+          children: [
+            Text(
+              choice, // TODO: Add better checkmark
+              style: const TextStyle(
+                fontSize: 30.0,
+              ),
+            ),
+            Icon(Icons.check),
+          ],
         ),
       );
     } else if ((selected == -1) && (correct == choiceValue)) {

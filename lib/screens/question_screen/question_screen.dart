@@ -61,6 +61,7 @@ class QuestionScreenMain extends StatelessWidget {
             }
           },
           builder: (context, state) {
+            print('Status: ${state.roundStatus}');
             if (state is LoadingState) {
               return const Text('Loading...');
             } else if (state is PregameState) {

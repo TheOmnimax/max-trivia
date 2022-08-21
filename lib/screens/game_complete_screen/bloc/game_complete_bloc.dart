@@ -25,26 +25,15 @@ class GameCompleteBloc extends Bloc<GameCompleteEvent, GameCompleteState> {
     );
     final data = Http.jsonDecode(response.body);
     // final scoresRaw = Http.jsonDecode(data['scores'] as String);
-    print(data);
     final scores = <String, int>{};
     final scoresRaw = data['scores'] as Map<String, dynamic>;
     for (final name in scoresRaw.keys) {
       scores[name] = scoresRaw[name] as int;
     }
-    // final scores = data['scores'].map(
-    //   (key, value) => MapEntry(
-    //     key,
-    //     value as int,
-    //   ),
-    // );
-    print('Got scores');
-    print(scores);
     final winners = <String>[];
     for (final winner in data['winners']) {
       winners.add(winner as String);
     } // TODO: Is there a better shorthand for this?
-    print('Got winners');
-    print(winners);
     emit(ResultsState(
       scores: scores,
       winners: winners,

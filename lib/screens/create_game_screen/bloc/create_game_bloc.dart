@@ -26,7 +26,6 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
   }
 
   Future _createGame(CreateGame event, Emitter<CreateGameState> emit) async {
-    print('Creating game...');
     emit(CreatingState(
       playerName: state.playerName,
     ));
@@ -36,7 +35,6 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
         'host_name': state.playerName == '' ? 'Host' : state.playerName,
       },
     );
-    print(createRoomResponse.body);
     final crBody = Http.jsonDecode(createRoomResponse.body);
     final roomCode = crBody['room_code'];
     final hostId = crBody['host_id'];
@@ -56,7 +54,6 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       'num_rounds': event.numRounds,
       'host_name': state.playerName,
     };
-    print(body);
     final createGameResponse = await Http.post(
       uri: '${baseUrl}new-game',
       body: body,

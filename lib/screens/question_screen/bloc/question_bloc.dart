@@ -30,13 +30,19 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   Timer? timer;
 
   Future _checkServer() async {
+    final int checkinTime;
+    if (state.roundStatus == RoundStatus.playing) {
+      checkinTime = DateTime.now().millisecondsSinceEpoch - state.startTime;
+    } else {
+      checkinTime = 0;
+    }
     final response = await Http.post(
       uri: '${baseUrl}player-checkin',
       body: {
         'room_code': appBloc.state.roomCode,
         'player_id': appBloc.state.playerId,
-        'time':
-            0, // This isn't needed for this action, but it is to fit with the schema
+        'time': checkinTime,
+        'ready': state.roundStatus == RoundStatus.ready,
       },
     );
     final data = Http.jsonDecode(response.body);
@@ -76,16 +82,22 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   void _serverQuery() {
-    const duration = Duration(seconds: 1);
+    const duration = Duration(seconds: 2);
 
     timer = Timer.periodic(duration, (Timer t) async => await _checkServer());
   }
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
     _serverQuery();
-    emit(PregameState(
-      roundStatus: RoundStatus.answered,
-    ));
+    if (appBloc.state.isHost) {
+      emit(PregameState(
+        roundStatus: RoundStatus.answered,
+      ));
+    } else {
+      emit(PregameState(
+        roundStatus: RoundStatus.ready,
+      ));
+    }
   }
 
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
@@ -101,17 +113,17 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   Future _loadQuestion(LoadQuestion event, Emitter<QuestionState> emit) async {
-    final int time;
-    if (state.startTime == 0) {
-      time = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    } else {
-      time = state.startTime;
-    }
+    // final int time;
+    // if (state.startTime == 0) {
+    //   time = DateTime.now().millisecondsSinceEpoch - state.startTime;
+    // } else {
+    //   time = state.startTime;
+    // }
 
     emit(PlayingState(
       question: event.question,
       choices: event.choices,
-      startTime: time,
+      startTime: DateTime.now().millisecondsSinceEpoch,
       answerStatus: AnswerStatus.waiting,
       roundStatus: RoundStatus.playing,
       selected: -1,
