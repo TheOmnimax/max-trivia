@@ -60,11 +60,16 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
         status = AnswerStatus.noAnswer;
       }
 
+      final winners = List<String>.from(data['winners']);
+      final isWinner = data['is_winner'] as bool;
+
       add(
         TimeUp(
           status: status,
           correct: correct,
           gameComplete: gameComplete,
+          winners: winners,
+          isWinner: isWinner,
         ),
       );
     } else if (state.roundStatus == RoundStatus.ready) {
@@ -124,6 +129,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       roundStatus: RoundStatus.playing,
       selected: -1,
       correct: -1,
+      winners: [],
+      isWinner: false,
     ));
   }
 
@@ -163,6 +170,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
         answerStatus: event.status,
         roundStatus: RoundStatus.ready,
         correct: event.correct,
+        winners: event.winners,
+        isWinner: event.isWinner,
       ),
     );
 

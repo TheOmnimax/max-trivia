@@ -111,7 +111,33 @@ class QuestionScreenMain extends StatelessWidget {
                       return Text(
                           'Please wait for the other players to finish up...');
                     } else if (state.roundStatus == RoundStatus.ready) {
-                      return Text('Please wait for next round...');
+                      return Column(
+                        children: [
+                          Builder(builder: (context) {
+                            if (state.isWinner) {
+                              return Text('Round winner!');
+                            } else if (state.selected == state.correct) {
+                              return Text(
+                                  'Correct, but someone else was faster');
+                            } else if (state.selected == -1) {
+                              return Text('Too slow!');
+                            } else {
+                              return Text('Incorrect!');
+                            }
+                          }),
+                          Builder(builder: (context) {
+                            if (state.winners.length == 0) {
+                              return Text('No winner this round');
+                            } else if (state.winners.length == 1) {
+                              return Text('Winner: ${state.winners[0]}');
+                            } else {
+                              return Text(
+                                  'Winners: ${state.winners.join(', ')}');
+                            }
+                          }),
+                          Text('Please wait for next round...'),
+                        ],
+                      );
                     } else {
                       return Text('');
                     }

@@ -49,17 +49,23 @@ class TimeUp extends QuestionEvent {
     required this.status,
     required this.correct,
     this.gameComplete = false,
+    required this.winners,
+    required this.isWinner,
   });
 
   final AnswerStatus status;
   final int correct;
   final bool gameComplete;
+  final List<String> winners;
+  final bool isWinner;
 
   @override
   List<Object?> get props => [
         status,
         correct,
         gameComplete,
+        winners,
+        isWinner,
       ];
 }
 
