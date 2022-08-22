@@ -29,7 +29,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       body: {
         'host_name': event.playerName == '' ? 'Host' : event.playerName,
       },
-    ).timeout(Duration(seconds: 1), onTimeout: () {
+    ).timeout(Duration(seconds: 5), onTimeout: () {
       print('Timed out');
       return Response('', 408);
     });
