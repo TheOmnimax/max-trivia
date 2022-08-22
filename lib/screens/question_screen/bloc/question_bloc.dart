@@ -6,8 +6,6 @@ import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/utils/http.dart';
 
-import '../../../constants/enums.dart';
-
 part 'question_event.dart';
 part 'question_state.dart';
 

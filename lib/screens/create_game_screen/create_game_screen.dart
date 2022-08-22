@@ -34,6 +34,8 @@ class _CreateGameMainState extends State<CreateGameMain> {
   @override
   Widget build(BuildContext context) {
     String playerName = '';
+    final createKey = GlobalKey<FormState>();
+
     return BlocListener<CreateGameBloc, CreateGameState>(
       listener: (context, state) {
         if (state is LoadingState) {
@@ -44,36 +46,35 @@ class _CreateGameMainState extends State<CreateGameMain> {
         }
       },
       child: DefaultScaffold(
-        child: Column(
-          children: [
-            TextInput(
-                label: 'Your name',
-                onChanged: (String value) {
-                  playerName = value;
-                },
-                initialValue: ''),
-            ConfirmButton(
-                onPressed: () async {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const SimpleDialog(
-                          title: Text('Loading...'),
-                          children: [
-                            bigLoading,
-                          ],
+        child: Form(
+          key: createKey,
+          child: Column(
+            children: [
+              TextInput(
+                  label: 'Your name',
+                  onChanged: (String value) {
+                    playerName = value;
+                  },
+                  initialValue: ''),
+              ConfirmButton(
+                  onPressed: () async {
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return LoadingDialog(context: context);
+                        });
+                    context.read<CreateGameBloc>().add(
+                          CreateGame(
+                            numRounds: 5,
+                            categories: ['19g8pnv6jujxzli9'],
+                            playerName: playerName,
+                          ),
                         );
-                      });
-                  context.read<CreateGameBloc>().add(
-                        CreateGame(
-                          numRounds: 5,
-                          categories: ['19g8pnv6jujxzli9'],
-                          playerName: playerName,
-                        ),
-                      );
-                },
-                label: 'Create')
-          ],
+                  },
+                  label: 'Create')
+            ],
+          ),
         ),
       ),
     );

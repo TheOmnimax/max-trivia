@@ -7,6 +7,7 @@ import 'package:max_trivia/shared_widgets/form_input.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
 
 import 'package:max_trivia/utils/navigation.dart';
+import '../../shared_widgets/loading.dart';
 import 'bloc/join_game_bloc.dart';
 
 class JoinGameScreen extends StatelessWidget {
@@ -33,11 +34,21 @@ class _JoinGameMainState extends State<JoinGameMain> {
   Widget build(BuildContext context) {
     String name = '';
     String roomCode = '';
-    final nameKey = GlobalKey<FormState>();
+    bool loading = false; // Is this the best way to do this?
+    final joinKey = GlobalKey<FormState>();
+
+    void stopLoading() {
+      print('Loading: $loading');
+      if (loading) {
+        loading = false;
+        print('Popping');
+        Navigator.pop(context);
+      }
+    }
 
     return BlocListener<JoinGameBloc, JoinGameState>(
       listener: (context, state) {
-        nameKey.currentState!.validate();
+        joinKey.currentState!.validate();
         if (state is LoadingState) {
           context.read<AppBloc>().add(
                 AddGameInfo(
@@ -55,7 +66,7 @@ class _JoinGameMainState extends State<JoinGameMain> {
       },
       child: DefaultScaffold(
         child: Form(
-          key: nameKey,
+          key: joinKey,
           child: Column(
             children: [
               TextInput(
@@ -76,24 +87,38 @@ class _JoinGameMainState extends State<JoinGameMain> {
                 },
                 validator: (String? value) {
                   if (value == '') {
+                    stopLoading();
                     return 'Room code cannot be blank!';
                   } else {
                     final joinGameState = context.read<JoinGameBloc>().state;
+                    print(joinGameState.joinStatus);
+                    final joinStatus = joinGameState.joinStatus;
                     if (joinGameState.joinStatus == JoinStatus.roomNotExists) {
+                      stopLoading();
                       return 'Room not found';
+                    } else if (joinStatus == JoinStatus.timedOut) {
+                      stopLoading();
+                      return 'Timed out. Please try again.';
                     }
                   }
                 },
               ),
               ConfirmButton(
-                onPressed: () {
+                onPressed: () async {
                   context.read<JoinGameBloc>().add(
                         JoinGame(
                           name: name,
                           roomCode: roomCode,
                         ),
                       );
-                  if (nameKey.currentState!.validate()) {}
+                  joinKey.currentState!.validate();
+                  loading = true;
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return LoadingDialog(context: context);
+                      });
                 },
                 label: 'Join',
               ),
