@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/screens/game_complete_screen/bloc/game_complete_bloc.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
+import 'package:max_trivia/utils/navigation.dart';
 
 class GameCompleteScreen extends StatelessWidget {
   const GameCompleteScreen({
