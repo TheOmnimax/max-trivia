@@ -9,6 +9,8 @@ abstract class QuestionState extends Equatable {
     required this.startTime,
     required this.answerStatus,
     required this.roundStatus,
+    this.winners = const <String>[],
+    this.isWinner = false,
   });
 
   final String question;
@@ -18,6 +20,8 @@ abstract class QuestionState extends Equatable {
   final int startTime;
   final AnswerStatus answerStatus;
   final RoundStatus roundStatus;
+  final List<String> winners;
+  final bool isWinner;
 
   @override
   List<Object?> get props => [
@@ -28,16 +32,21 @@ abstract class QuestionState extends Equatable {
         startTime,
         answerStatus,
         roundStatus,
+        winners,
+        isWinner,
       ];
 
-  QuestionState copyWith(
-      {String? question,
-      List<String>? choices,
-      int? selected,
-      int? correct,
-      int? startTime,
-      AnswerStatus? answerStatus,
-      RoundStatus? roundStatus});
+  QuestionState copyWith({
+    String? question,
+    List<String>? choices,
+    int? selected,
+    int? correct,
+    int? startTime,
+    AnswerStatus? answerStatus,
+    RoundStatus? roundStatus,
+    List<String>? winners,
+    bool? isWinner,
+  });
 }
 
 class LoadingState extends QuestionState {
@@ -61,6 +70,8 @@ class LoadingState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
+    List<String>? winners,
+    bool? isWinner,
   }) {
     return const LoadingState();
   }
@@ -88,6 +99,8 @@ class PregameState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
+    List<String>? winners,
+    bool? isWinner,
   }) {
     return PregameState(roundStatus: roundStatus ?? this.roundStatus);
   }
@@ -102,6 +115,8 @@ class PlayingState extends QuestionState {
     required int startTime,
     required AnswerStatus answerStatus,
     required RoundStatus roundStatus,
+    required List<String> winners,
+    required bool isWinner,
   }) : super(
           question: question,
           choices: choices,
@@ -110,6 +125,8 @@ class PlayingState extends QuestionState {
           startTime: startTime,
           answerStatus: answerStatus,
           roundStatus: roundStatus,
+          winners: winners,
+          isWinner: isWinner,
         );
 
   @override
@@ -121,6 +138,8 @@ class PlayingState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
+    List<String>? winners,
+    bool? isWinner,
   }) {
     return PlayingState(
       question: question ?? this.question,
@@ -130,6 +149,8 @@ class PlayingState extends QuestionState {
       startTime: startTime ?? this.startTime,
       answerStatus: answerStatus ?? this.answerStatus,
       roundStatus: roundStatus ?? this.roundStatus,
+      winners: winners ?? this.winners,
+      isWinner: isWinner ?? this.isWinner,
     );
   }
 }
@@ -146,6 +167,7 @@ class GameCompleteState extends QuestionState {
           roundStatus: RoundStatus.ready,
         );
 
+  @override
   GameCompleteState copyWith({
     String? question,
     List<String>? choices,
@@ -154,6 +176,8 @@ class GameCompleteState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
+    List<String>? winners,
+    bool? isWinner,
   }) {
     return const GameCompleteState();
   }

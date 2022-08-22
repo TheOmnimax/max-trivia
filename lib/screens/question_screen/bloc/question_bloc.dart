@@ -48,29 +48,30 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     final data = Http.jsonDecode(response.body);
     if (data.containsKey('started') && (data['started'] as bool == false)) {
       // If game not yet started
-    } else if (data['game_complete'] as bool) {
-      timer?.cancel();
-
-      await Future.delayed(Duration(seconds: 1));
-      add(const GameComplete());
     } else if (data['round_complete'] as bool) {
       final roundStatus = state.roundStatus;
       final correct = data['correct'] as int;
-      if (roundStatus == RoundStatus.playing) {
-        add(
-          TimeUp(
-            status: AnswerStatus.noAnswer,
-            correct: correct,
-          ),
-        );
-      } else if (roundStatus == RoundStatus.answered) {
-        add(
-          TimeUp(
-            status: AnswerStatus.winner,
-            correct: correct,
-          ),
-        ); // TODO: Update with checks from the server to see if they were really the winner
+      final gameComplete = data['game_complete'] as bool;
+      final AnswerStatus status;
+      if (roundStatus == RoundStatus.answered) {
+        status = AnswerStatus
+            .winner; // TODO: Update with checks from the server to see if they were really the winner
+      } else {
+        status = AnswerStatus.noAnswer;
       }
+
+      final winners = List<String>.from(data['winners']);
+      final isWinner = data['is_winner'] as bool;
+
+      add(
+        TimeUp(
+          status: status,
+          correct: correct,
+          gameComplete: gameComplete,
+          winners: winners,
+          isWinner: isWinner,
+        ),
+      );
     } else if (state.roundStatus == RoundStatus.ready) {
       final question = data['question'] as String;
       final choices = List<String>.from(data['choices']);
@@ -128,6 +129,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       roundStatus: RoundStatus.playing,
       selected: -1,
       correct: -1,
+      winners: [],
+      isWinner: false,
     ));
   }
 
@@ -161,14 +164,24 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     ));
   }
 
-  void _timeUp(TimeUp event, Emitter<QuestionState> emit) {
+  Future _timeUp(TimeUp event, Emitter<QuestionState> emit) async {
     emit(
       state.copyWith(
         answerStatus: event.status,
         roundStatus: RoundStatus.ready,
         correct: event.correct,
+        winners: event.winners,
+        isWinner: event.isWinner,
       ),
     );
+
+    if (event.gameComplete) {
+      timer?.cancel();
+      print('Cancelled');
+      await Future.delayed(Duration(seconds: 2));
+      print('Completing game...');
+      emit(const GameCompleteState());
+    }
   }
 
   Future _nextRound(NextRound event, Emitter<QuestionState> emit) async {

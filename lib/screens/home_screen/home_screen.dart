@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/screens/create_game_screen/create_game_screen.dart';
 import 'package:max_trivia/screens/home_screen/bloc/home_bloc.dart';
+import 'package:max_trivia/screens/join_game_screen/join_game_screen.dart';
 import 'package:max_trivia/shared_widgets/buttons.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
+import 'package:max_trivia/utils/navigation.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,19 +29,19 @@ class HomePage extends StatelessWidget {
         children: [
           ScreenButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const CreateGameScreen(),
-                ),
+              newScreen(
+                context: context,
+                screen: const CreateGameScreen(),
               );
-              // Navigator.pushNamed(context, '/create-game');
             },
             text: 'Host',
           ),
           ScreenButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/join-game');
+              newScreen(
+                context: context,
+                screen: const JoinGameScreen(),
+              );
             },
             text: 'Join',
           ),
