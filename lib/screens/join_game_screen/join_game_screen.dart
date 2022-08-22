@@ -34,7 +34,7 @@ class _JoinGameMainState extends State<JoinGameMain> {
   Widget build(BuildContext context) {
     String name = '';
     String roomCode = '';
-    bool loading = false; // Is this the best way to do this?
+    bool loading = false; // TODO: QUESTION Is this the best way to do this?
     final joinKey = GlobalKey<FormState>();
 
     void stopLoading() {
@@ -105,20 +105,22 @@ class _JoinGameMainState extends State<JoinGameMain> {
               ),
               ConfirmButton(
                 onPressed: () async {
-                  context.read<JoinGameBloc>().add(
-                        JoinGame(
-                          name: name,
-                          roomCode: roomCode,
-                        ),
-                      );
                   joinKey.currentState!.validate();
-                  loading = true;
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return LoadingDialog(context: context);
-                      });
+                  if (!((name == '') || (roomCode == ''))) {
+                    context.read<JoinGameBloc>().add(
+                          JoinGame(
+                            name: name,
+                            roomCode: roomCode,
+                          ),
+                        );
+                    loading = true;
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return LoadingDialog(context: context);
+                        });
+                  }
                 },
                 label: 'Join',
               ),

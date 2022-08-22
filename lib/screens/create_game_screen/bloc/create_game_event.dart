@@ -7,19 +7,8 @@ abstract class CreateGameEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class UpdateName extends CreateGameEvent {
-  const UpdateName({
-    required this.playerName,
-  });
-
-  final String playerName;
-
-  @override
-  List<Object?> get props => [playerName];
-}
-
-// class CreateRoom extends CreateGameEvent {
-//   const CreateRoom();
+// class ResetStatus extends CreateGameEvent {
+//   const ResetStatus();
 // }
 
 class CreateGame extends CreateGameEvent {
