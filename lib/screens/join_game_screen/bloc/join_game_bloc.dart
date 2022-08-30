@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/utils/http.dart';
 
@@ -15,6 +16,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
   }
 
   Future _joinGame(JoinGame event, Emitter<JoinGameState> emit) async {
+    print('Joining...');
     emit(const JoiningState());
     final response = await Http.post(
       uri: '${baseUrl}add-player',
@@ -22,11 +24,17 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
         'room_code': event.roomCode,
         'player_name': event.name,
       },
-    );
+    ).timeout(Duration(seconds: 5), onTimeout: () {
+      return Response('', 408);
+    });
     final statusCode = response.statusCode;
+    print(response.statusCode);
+    print(response.body);
 
     if (statusCode >= 500) {
       print(response.statusCode);
+    } else if (statusCode == 408) {
+      emit(const MainState(joinStatus: JoinStatus.timedOut));
     } else if (statusCode == 404) {
       print('Room not found');
       emit(const MainState(joinStatus: JoinStatus.roomNotExists));

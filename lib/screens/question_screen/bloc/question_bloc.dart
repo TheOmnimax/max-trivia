@@ -6,8 +6,6 @@ import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/utils/http.dart';
 
-import '../../../constants/enums.dart';
-
 part 'question_event.dart';
 part 'question_state.dart';
 
@@ -48,6 +46,16 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     final data = Http.jsonDecode(response.body);
     if (data.containsKey('started') && (data['started'] as bool == false)) {
       // If game not yet started
+      final players = List<String>.from(data['player_names']);
+      final scoresRaw = data['scores'] as Map<String, dynamic>;
+      final scores = <String, int>{};
+      for (final name in scoresRaw.keys) {
+        scores[name] = scoresRaw[name] as int;
+      }
+      emit(state.copyWith(
+        players: players,
+        scores: scores,
+      ));
     } else if (data['round_complete'] as bool) {
       final roundStatus = state.roundStatus;
       final correct = data['correct'] as int;
@@ -91,11 +99,15 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
     _serverQuery();
     if (appBloc.state.isHost) {
-      emit(PregameState(
+      emit(const PregameState(
+        players: [],
+        score: {},
         roundStatus: RoundStatus.answered,
       ));
     } else {
-      emit(PregameState(
+      emit(const PregameState(
+        players: [],
+        score: {},
         roundStatus: RoundStatus.ready,
       ));
     }
@@ -103,6 +115,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
     emit(const PregameState(
+      players: [],
+      score: {},
       roundStatus: RoundStatus.ready,
     ));
     final response = await Http.post(uri: '${baseUrl}start-game', body: {
@@ -122,6 +136,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     // }
 
     emit(PlayingState(
+      players: state.players,
+      score: state.scores,
       question: event.question,
       choices: event.choices,
       startTime: DateTime.now().millisecondsSinceEpoch,

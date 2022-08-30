@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/screens/create_game_screen/bloc/create_game_bloc.dart';
 import 'package:max_trivia/screens/question_screen/question_screen.dart';
 import 'package:max_trivia/shared_widgets/form_input.dart';
@@ -34,8 +35,22 @@ class _CreateGameMainState extends State<CreateGameMain> {
   @override
   Widget build(BuildContext context) {
     String playerName = '';
+    bool loading = false;
+
+    void stopLoading() {
+      print('Loading: $loading');
+      if (loading) {
+        loading = false;
+        print('Popping');
+        Navigator.pop(context);
+      }
+    }
+
+    final createKey = GlobalKey<FormState>();
+
     return BlocListener<CreateGameBloc, CreateGameState>(
       listener: (context, state) {
+        createKey.currentState!.validate();
         if (state is LoadingState) {
           newScreen(
             context: context,
@@ -44,36 +59,53 @@ class _CreateGameMainState extends State<CreateGameMain> {
         }
       },
       child: DefaultScaffold(
-        child: Column(
-          children: [
-            TextInput(
+        child: Form(
+          key: createKey,
+          child: Column(
+            children: [
+              TextInput(
                 label: 'Your name',
                 onChanged: (String value) {
                   playerName = value;
                 },
-                initialValue: ''),
-            ConfirmButton(
-                onPressed: () async {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const SimpleDialog(
-                          title: Text('Loading...'),
-                          children: [
-                            bigLoading,
-                          ],
-                        );
-                      });
-                  context.read<CreateGameBloc>().add(
-                        CreateGame(
-                          numRounds: 5,
-                          categories: ['19g8pnv6jujxzli9'],
-                          playerName: playerName,
-                        ),
-                      );
+                initialValue: '',
+                validator: (String? value) {
+                  if (value == '') {
+                    stopLoading();
+                    return 'Please enter your name!';
+                  } else if (context.read<CreateGameBloc>().state.joinStatus ==
+                      JoinStatus.timedOut) {
+                    stopLoading();
+                    return 'Timed out. Please try again.';
+                  }
                 },
-                label: 'Create')
-          ],
+              ),
+              ConfirmButton(
+                  onPressed: () async {
+                    createKey.currentState!.validate();
+                    if (playerName != '') {
+                      context.read<CreateGameBloc>().add(
+                            CreateGame(
+                              numRounds: 5,
+                              categories: ['19g8pnv6jujxzli9'],
+                              playerName: playerName,
+                            ),
+                          );
+                      print('Loading');
+                      loading = true;
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) {
+                            return LoadingDialog(context: context);
+                          });
+                    } else {
+                      // print('Invalid');
+                    }
+                  },
+                  label: 'Create'),
+            ],
+          ),
         ),
       ),
     );
