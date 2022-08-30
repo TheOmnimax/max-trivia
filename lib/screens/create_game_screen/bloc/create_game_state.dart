@@ -2,35 +2,62 @@ part of 'create_game_bloc.dart';
 
 abstract class CreateGameState extends Equatable {
   const CreateGameState({
-    required this.playerName,
+    required this.joinStatus,
   });
 
-  final String playerName;
+  final JoinStatus joinStatus;
 
   @override
-  List<Object?> get props => [playerName];
+  List<Object?> get props => [
+        joinStatus,
+      ];
+
+  CreateGameState copyWith({
+    JoinStatus? joinStatus,
+  });
 }
 
 class MainState extends CreateGameState {
   const MainState({
-    required String playerName,
+    required JoinStatus joinStatus,
   }) : super(
-          playerName: playerName,
+          joinStatus: joinStatus,
         );
+
+  @override
+  MainState copyWith({
+    JoinStatus? joinStatus,
+  }) {
+    return MainState(
+      joinStatus: joinStatus ?? this.joinStatus,
+    );
+  }
 }
 
 class CreatingState extends CreateGameState {
-  const CreatingState({
-    required String playerName,
-  }) : super(
-          playerName: playerName,
+  const CreatingState()
+      : super(
+          joinStatus: JoinStatus.none,
         );
+
+  @override
+  CreatingState copyWith({
+    JoinStatus? joinStatus,
+  }) {
+    return CreatingState();
+  }
 }
 
 class LoadingState extends CreateGameState {
-  const LoadingState({
-    required String playerName,
-  }) : super(
-          playerName: playerName,
+  const LoadingState()
+      : super(
+          joinStatus: JoinStatus.none,
         );
+
+  @override
+  LoadingState copyWith({
+    JoinStatus? joinStatus,
+  }) {
+    return LoadingState();
+  }
 }

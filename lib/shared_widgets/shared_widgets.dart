@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'loading.dart';
+
 class DefaultScaffold extends StatelessWidget {
   const DefaultScaffold({
     required this.child,
@@ -17,23 +19,3 @@ class DefaultScaffold extends StatelessWidget {
     );
   }
 }
-
-// class JoinStatusDisplay extends StatelessWidget {
-//   const JoinStatusDisplay({
-//     required this.joinStatus,
-//     Key? key,
-//   }) : super(key: key);
-//
-//   final JoinStatus joinStatus;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     if (joinStatus == JoinStatus.none) {
-//       return Text('');
-//     }
-//     final String errorText;
-//     if (joinStatus == JoinStatus.noName) {
-//       errorText = 'Please '
-//     }
-//   }
-// }

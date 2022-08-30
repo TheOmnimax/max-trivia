@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/utils/http.dart';
@@ -12,29 +13,33 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     required this.appBloc,
   }) : super(
           const MainState(
-            playerName: '',
+            joinStatus: JoinStatus.none,
           ),
         ) {
-    on<UpdateName>(_updateName);
     on<CreateGame>(_createGame);
+    // on<ResetStatus>(_resetStatus);
   }
 
   final AppBloc appBloc;
 
-  void _updateName(UpdateName event, Emitter<CreateGameState> emit) {
-    emit(MainState(playerName: event.playerName));
-  }
-
   Future _createGame(CreateGame event, Emitter<CreateGameState> emit) async {
-    emit(CreatingState(
-      playerName: state.playerName,
-    ));
+    emit(CreatingState());
     final createRoomResponse = await Http.post(
       uri: '${baseUrl}create-room',
       body: {
-        'host_name': state.playerName == '' ? 'Host' : state.playerName,
+        'host_name': event.playerName == '' ? 'Host' : event.playerName,
       },
-    );
+    ).timeout(Duration(seconds: 5), onTimeout: () {
+      print('Timed out');
+      return Response('', 408);
+    });
+
+    if (createRoomResponse.statusCode == 408) {
+      emit(MainState(
+        joinStatus: JoinStatus.timedOut,
+      ));
+      return;
+    }
     final crBody = Http.jsonDecode(createRoomResponse.body);
     final roomCode = crBody['room_code'];
     final hostId = crBody['host_id'];
@@ -52,7 +57,7 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
       'host_id': hostId,
       'categories': event.categories,
       'num_rounds': event.numRounds,
-      'host_name': state.playerName,
+      'host_name': event.playerName,
     };
     final createGameResponse = await Http.post(
       uri: '${baseUrl}new-game',
@@ -64,8 +69,12 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     // categories: list[str]
     // num_rounds: int = 10
 
-    emit(LoadingState(
-      playerName: state.playerName,
-    ));
+    emit(LoadingState());
   }
+
+  // void _resetStatus(ResetStatus event, Emitter<CreateGameState> emit) {
+  //   emit(state.copyWith(
+  //     joinStatus: JoinStatus.none,
+  //   ));
+  // }
 }

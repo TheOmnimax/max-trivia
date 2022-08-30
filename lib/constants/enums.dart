@@ -41,4 +41,5 @@ enum JoinStatus {
   noRoomCode,
   roomNotExists,
   joined,
+  timedOut,
 }
