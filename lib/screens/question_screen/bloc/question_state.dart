@@ -2,6 +2,8 @@ part of 'question_bloc.dart';
 
 abstract class QuestionState extends Equatable {
   const QuestionState({
+    required this.players,
+    required this.scores,
     required this.question,
     required this.choices,
     required this.selected,
@@ -13,6 +15,8 @@ abstract class QuestionState extends Equatable {
     this.isWinner = false,
   });
 
+  final List<String> players;
+  final Map<String, int> scores;
   final String question;
   final List<String> choices;
   final int selected;
@@ -25,6 +29,8 @@ abstract class QuestionState extends Equatable {
 
   @override
   List<Object?> get props => [
+        players,
+        scores,
         question,
         choices,
         selected,
@@ -37,6 +43,8 @@ abstract class QuestionState extends Equatable {
       ];
 
   QuestionState copyWith({
+    List<String>? players,
+    Map<String, int>? scores,
     String? question,
     List<String>? choices,
     int? selected,
@@ -52,6 +60,8 @@ abstract class QuestionState extends Equatable {
 class LoadingState extends QuestionState {
   const LoadingState()
       : super(
+          players: const <String>[],
+          scores: const <String, int>{},
           question: '',
           choices: const [],
           selected: -1,
@@ -63,6 +73,8 @@ class LoadingState extends QuestionState {
 
   @override
   LoadingState copyWith({
+    List<String>? players,
+    Map<String, int>? scores,
     String? question,
     List<String>? choices,
     int? selected,
@@ -79,8 +91,12 @@ class LoadingState extends QuestionState {
 
 class PregameState extends QuestionState {
   const PregameState({
+    required List<String> players,
+    required Map<String, int> score,
     required RoundStatus roundStatus,
   }) : super(
+          players: const <String>[],
+          scores: const <String, int>{},
           question: '',
           choices: const [],
           selected: -1,
@@ -92,6 +108,8 @@ class PregameState extends QuestionState {
 
   @override
   PregameState copyWith({
+    List<String>? players,
+    Map<String, int>? scores,
     String? question,
     List<String>? choices,
     int? selected,
@@ -102,12 +120,18 @@ class PregameState extends QuestionState {
     List<String>? winners,
     bool? isWinner,
   }) {
-    return PregameState(roundStatus: roundStatus ?? this.roundStatus);
+    return PregameState(
+      players: players ?? this.players,
+      score: scores ?? this.scores,
+      roundStatus: roundStatus ?? this.roundStatus,
+    );
   }
 }
 
 class PlayingState extends QuestionState {
   const PlayingState({
+    required List<String> players,
+    required Map<String, int> score,
     required String question,
     required List<String> choices,
     required int selected,
@@ -118,6 +142,8 @@ class PlayingState extends QuestionState {
     required List<String> winners,
     required bool isWinner,
   }) : super(
+          players: const <String>[],
+          scores: const <String, int>{},
           question: question,
           choices: choices,
           selected: selected,
@@ -131,6 +157,8 @@ class PlayingState extends QuestionState {
 
   @override
   PlayingState copyWith({
+    List<String>? players,
+    Map<String, int>? scores,
     String? question,
     List<String>? choices,
     int? selected,
@@ -142,6 +170,8 @@ class PlayingState extends QuestionState {
     bool? isWinner,
   }) {
     return PlayingState(
+      players: players ?? this.players,
+      score: scores ?? this.scores,
       question: question ?? this.question,
       choices: choices ?? this.choices,
       selected: selected ?? this.selected,
@@ -158,6 +188,8 @@ class PlayingState extends QuestionState {
 class GameCompleteState extends QuestionState {
   const GameCompleteState()
       : super(
+          players: const <String>[],
+          scores: const <String, int>{},
           question: '',
           choices: const [],
           selected: -1,
@@ -169,6 +201,8 @@ class GameCompleteState extends QuestionState {
 
   @override
   GameCompleteState copyWith({
+    List<String>? players,
+    Map<String, int>? scores,
     String? question,
     List<String>? choices,
     int? selected,
