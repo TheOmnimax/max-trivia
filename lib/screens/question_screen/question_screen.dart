@@ -131,13 +131,12 @@ class QuestionScreenMain extends StatelessWidget {
                             }
                           }),
                           Builder(builder: (context) {
-                            if (state.winners.length == 0) {
+                            if (state.winner.length == 0) {
                               return Text('No winner this round');
-                            } else if (state.winners.length == 1) {
-                              return Text('Winner: ${state.winners[0]}');
+                            } else if (state.winner.length == 1) {
+                              return Text('Winner: ${state.winner[0]}');
                             } else {
-                              return Text(
-                                  'Winners: ${state.winners.join(', ')}');
+                              return Text('Winner: ${state.winner}');
                             }
                           }),
                           Text('Please wait for next round...'),

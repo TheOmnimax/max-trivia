@@ -17,61 +17,63 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
           ),
         ) {
     on<CreateGame>(_createGame);
+    on<StartGame>(_startGame);
     // on<ResetStatus>(_resetStatus);
+
+    appBloc.socket.on('create-room', (data) {
+      print('Room created');
+      print(data);
+    });
   }
 
   final AppBloc appBloc;
 
   Future _createGame(CreateGame event, Emitter<CreateGameState> emit) async {
-    emit(CreatingState());
-    final createRoomResponse = await Http.post(
-      uri: '${baseUrl}create-room',
-      body: {
-        'host_name': event.playerName == '' ? 'Host' : event.playerName,
-      },
-    ).timeout(Duration(seconds: 5), onTimeout: () {
-      print('Timed out');
-      return Response('', 408);
+    emit(CreatingState()); // In the process of creating the game
+    final socket = appBloc.socket;
+
+    socket.on('create-room', (crBody) {
+      print('Room created');
+      // final crBody = Http.jsonDecode(data);
+
+      final roomCode = crBody['room_code'];
+      final hostId = crBody['host_id'];
+      appBloc.add(
+        AddGameInfo(
+          roomCode: roomCode,
+          playerId: hostId,
+          isHost: true,
+          playerName: event.playerName,
+        ),
+      );
+      final body = {
+        'room_code': roomCode,
+        'host_id': hostId,
+        'categories': event.categories,
+        'num_rounds': event.numRounds,
+        'host_name': event.playerName,
+      };
+      print('About to emit new game');
+      socket.emit('new-game', body);
+      print('New game emitted');
     });
 
-    if (createRoomResponse.statusCode == 408) {
-      emit(MainState(
-        joinStatus: JoinStatus.timedOut,
-      ));
-      return;
-    }
-    final crBody = Http.jsonDecode(createRoomResponse.body);
-    final roomCode = crBody['room_code'];
-    final hostId = crBody['host_id'];
-    appBloc.add(
-      AddGameInfo(
-        roomCode: roomCode,
-        playerId: hostId,
-        isHost: true,
-        playerName: event.playerName,
-      ),
-    );
+    socket.on('new-game', (data) {
+      print('Created game');
+      add(const StartGame());
+      print('Added event');
+    });
 
-    final body = {
-      'room_code': roomCode,
-      'host_id': hostId,
-      'categories': event.categories,
-      'num_rounds': event.numRounds,
-      'host_name': event.playerName,
-    };
-    final createGameResponse = await Http.post(
-      uri: '${baseUrl}new-game',
-      body: body,
-    );
-
-    // room_code: str
-    // host_id: str
-    // categories: list[str]
-    // num_rounds: int = 10
-
-    emit(LoadingState());
+    socket.emit('create-room', {
+      'host_name': event.playerName == '' ? 'Host' : event.playerName,
+    });
   }
 
+  void _startGame(StartGame event, Emitter<CreateGameState> emit) {
+    print('About to emit');
+    emit(LoadingState());
+    print('Emitted');
+  }
   // void _resetStatus(ResetStatus event, Emitter<CreateGameState> emit) {
   //   emit(state.copyWith(
   //     joinStatus: JoinStatus.none,

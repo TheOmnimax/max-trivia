@@ -25,3 +25,7 @@ class CreateGame extends CreateGameEvent {
   @override
   List<Object?> get props => [playerName, numRounds, categories];
 }
+
+class StartGame extends CreateGameEvent {
+  const StartGame();
+}
