@@ -59,9 +59,10 @@ class QuestionScreenMain extends StatelessWidget {
         body: BlocConsumer<QuestionBloc, QuestionState>(
           listener: (context, state) {
             if (state is GameCompleteState) {
+              print('Game complete new screen...');
               newScreen(
                 context: context,
-                screen: const GameCompleteScreen(),
+                screen: GameCompleteScreen(),
               );
             }
           },
@@ -151,7 +152,7 @@ class QuestionScreenMain extends StatelessWidget {
             } else if (state is GameCompleteState) {
               return Text('Please wait for results...');
             } else {
-              return Text('Invalid state: $state');
+              return Text('Invalid state on question screen: $state');
             }
           },
         ),

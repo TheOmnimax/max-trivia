@@ -44,10 +44,10 @@ class Main extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
-        '/create-game': (context) => const CreateGameScreen(),
-        '/join-game': (context) => const JoinGameScreen(),
-        '/question-screen': (context) => const QuestionScreen(),
-        '/game-complete': (context) => const GameCompleteScreen()
+        // '/create-game': (context) => const CreateGameScreen(),
+        // '/join-game': (context) => const JoinGameScreen(),
+        // '/question-screen': (context) => const QuestionScreen(),
+        // '/game-complete': (context) => const GameCompleteScreen()
       },
     );
   }

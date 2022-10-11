@@ -184,10 +184,12 @@ class PlayingState extends QuestionState {
 }
 
 class GameCompleteState extends QuestionState {
-  const GameCompleteState()
-      : super(
+  const GameCompleteState({
+    required Map<String, int> scores,
+    required this.winners,
+  }) : super(
           players: const <String>[],
-          scores: const <String, int>{},
+          scores: scores,
           question: '',
           choices: const [],
           selected: -1,
@@ -196,6 +198,8 @@ class GameCompleteState extends QuestionState {
           answerStatus: AnswerStatus.answered,
           roundStatus: RoundStatus.ready,
         );
+
+  final List<String> winners;
 
   @override
   GameCompleteState copyWith({
@@ -210,7 +214,11 @@ class GameCompleteState extends QuestionState {
     RoundStatus? roundStatus,
     String? winner,
     bool? isWinner,
+    List<String>? winners,
   }) {
-    return const GameCompleteState();
+    return GameCompleteState(
+      scores: scores ?? this.scores,
+      winners: winners ?? this.winners,
+    );
   }
 }
