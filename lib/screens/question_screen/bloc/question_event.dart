@@ -80,5 +80,14 @@ class NextRound extends QuestionEvent {
 }
 
 class GameComplete extends QuestionEvent {
-  const GameComplete();
+  const GameComplete({
+    required this.scores,
+    required this.winners,
+  });
+
+  final Map<String, int> scores;
+  final List<String> winners;
+
+  @override
+  List<Object?> get props => [scores, winners];
 }
