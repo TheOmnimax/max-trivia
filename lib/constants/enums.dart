@@ -42,4 +42,5 @@ enum JoinStatus {
   roomNotExists,
   joined,
   timedOut,
+  unknown
 }

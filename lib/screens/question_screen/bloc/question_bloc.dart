@@ -98,10 +98,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   final AppBloc appBloc;
   Timer? timer;
 
-  // final _channel = WebSocketChannel.connect(
-  //     // Uri.parse('${wsUrl}socket-test'),
-  //     );
-
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
     appBloc.socket.emit('pregame-status', {
       'player_id': appBloc.state.playerId,
@@ -112,7 +108,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
     emit(const PregameState(
       players: [],
-      // score: {},
       roundStatus: RoundStatus.ready,
     ));
     appBloc.socket.emit(
@@ -139,13 +134,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   Future _loadQuestion(LoadQuestion event, Emitter<QuestionState> emit) async {
-    // final int time;
-    // if (state.startTime == 0) {
-    //   time = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    // } else {
-    //   time = state.startTime;
-    // }
-
     emit(PlayingState(
       players: state.players,
       score: state.scores,
@@ -172,29 +160,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       'player_id': appBloc.state.playerId,
       'answer': event.selected,
     });
-    final time = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    // final response = await Http.post(
-    //   uri: '${baseUrl}answer-question',
-    //   body: {
-    //     'answer': event.selected,
-    //     'time': time,
-    //     'player_id': appBloc.state.playerId,
-    //     'room_code': appBloc.state.roomCode,
-    //   },
-    // );
-
-    // final body = Http.jsonDecode(response.body);
-    // final correct = body['player_correct'] as bool;
-    // final AnswerStatus status;
-    // if (correct) {
-    //   status = AnswerStatus.correct;
-    // } else {
-    //   status = AnswerStatus.incorrect;
-    // }
-    //
-    // emit(state.copyWith(
-    //   answerStatus: status,
-    // ));
   }
 
   void _roundComplete(RoundComplete event, Emitter<QuestionState> emit) {

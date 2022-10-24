@@ -18,7 +18,6 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
         ) {
     on<CreateGame>(_createGame);
     on<StartGame>(_startGame);
-    // on<ResetStatus>(_resetStatus);
 
     appBloc.socket.on('create-room', (data) {
       print('Room created');
@@ -34,7 +33,6 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
 
     socket.on('create-room', (crBody) {
       print('Room created');
-      // final crBody = Http.jsonDecode(data);
 
       final roomCode = crBody['room_code'];
       final hostId = crBody['host_id'];
@@ -74,9 +72,4 @@ class CreateGameBloc extends Bloc<CreateGameEvent, CreateGameState> {
     emit(LoadingState());
     print('Emitted');
   }
-  // void _resetStatus(ResetStatus event, Emitter<CreateGameState> emit) {
-  //   emit(state.copyWith(
-  //     joinStatus: JoinStatus.none,
-  //   ));
-  // }
 }
