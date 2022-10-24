@@ -7,10 +7,6 @@ abstract class CreateGameEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-// class ResetStatus extends CreateGameEvent {
-//   const ResetStatus();
-// }
-
 class CreateGame extends CreateGameEvent {
   const CreateGame({
     required this.playerName,

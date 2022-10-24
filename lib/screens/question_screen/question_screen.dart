@@ -74,8 +74,13 @@ class QuestionScreenMain extends StatelessWidget {
                 if (context.read<AppBloc>().state.isHost) {
                   return Column(
                     children: [
-                      Text(
-                          'Room code: ${context.read<AppBloc>().state.roomCode}'),
+                      Row(
+                        children: [
+                          Text('Room code: '),
+                          SelectableText(
+                              context.read<AppBloc>().state.roomCode),
+                        ],
+                      ),
                       TextButton(
                           onPressed: () {
                             context.read<QuestionBloc>().add(

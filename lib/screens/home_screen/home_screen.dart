@@ -28,6 +28,7 @@ class HomePage extends StatelessWidget {
     return DefaultScaffold(
       child: Column(
         children: [
+          Text('Version 1.0.2'),
           ScreenButton(
             onPressed: () {
               newScreen(
