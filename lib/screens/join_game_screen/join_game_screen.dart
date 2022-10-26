@@ -17,7 +17,7 @@ class JoinGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       child: JoinGameMain(),
-      create: (context) => JoinGameBloc(),
+      create: (context) => JoinGameBloc(appBloc: context.read<AppBloc>()),
     );
   }
 }
@@ -99,6 +99,9 @@ class _JoinGameMainState extends State<JoinGameMain> {
                     } else if (joinStatus == JoinStatus.timedOut) {
                       stopLoading();
                       return 'Timed out. Please try again.';
+                    } else if (joinStatus == JoinStatus.unknown) {
+                      stopLoading();
+                      return 'Unknown error. Please try again.';
                     }
                   }
                 },

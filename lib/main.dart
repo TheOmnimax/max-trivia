@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Running');
     return BlocProvider(
       create: (_) => AppBloc()..add(const AppOpened()),
       child: const Main(),
@@ -44,10 +45,10 @@ class Main extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
-        '/create-game': (context) => const CreateGameScreen(),
-        '/join-game': (context) => const JoinGameScreen(),
-        '/question-screen': (context) => const QuestionScreen(),
-        '/game-complete': (context) => const GameCompleteScreen()
+        // '/create-game': (context) => const CreateGameScreen(),
+        // '/join-game': (context) => const JoinGameScreen(),
+        // '/question-screen': (context) => const QuestionScreen(),
+        // '/game-complete': (context) => const GameCompleteScreen()
       },
     );
   }

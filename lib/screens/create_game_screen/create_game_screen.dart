@@ -86,7 +86,7 @@ class _CreateGameMainState extends State<CreateGameMain> {
                     if (playerName != '') {
                       context.read<CreateGameBloc>().add(
                             CreateGame(
-                              numRounds: 5,
+                              numRounds: 5, // NUMBER OF ROUNDS
                               categories: ['19g8pnv6jujxzli9'],
                               playerName: playerName,
                             ),

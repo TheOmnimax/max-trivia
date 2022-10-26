@@ -12,10 +12,11 @@ class GameCompleteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('On game complete screen');
     return BlocProvider(
       create: (context) => GameCompleteBloc(
         appBloc: context.read<AppBloc>(),
-      )..add(GetResults()),
+      )..add(const GetResults()),
       child: const GameCompleteMain(),
     );
   }
@@ -32,7 +33,7 @@ class GameCompleteMain extends StatelessWidget {
         child: BlocBuilder<GameCompleteBloc, GameCompleteState>(
       builder: (BuildContext context, state) {
         if (state is LoadingState) {
-          return Container();
+          return Text('Loading, please wait...');
         } else if (state is ResultsState) {
           final winners = state.winners;
 
@@ -56,7 +57,7 @@ class GameCompleteMain extends StatelessWidget {
             );
           }
         } else {
-          return Text('Invalid state: $state');
+          return Text('Invalid state on results screen: $state');
         }
       },
     ));

@@ -11,7 +11,7 @@ abstract class QuestionState extends Equatable {
     required this.startTime,
     required this.answerStatus,
     required this.roundStatus,
-    this.winners = const <String>[],
+    this.winner = '',
     this.isWinner = false,
   });
 
@@ -24,7 +24,7 @@ abstract class QuestionState extends Equatable {
   final int startTime;
   final AnswerStatus answerStatus;
   final RoundStatus roundStatus;
-  final List<String> winners;
+  final String winner;
   final bool isWinner;
 
   @override
@@ -38,7 +38,7 @@ abstract class QuestionState extends Equatable {
         startTime,
         answerStatus,
         roundStatus,
-        winners,
+        winner,
         isWinner,
       ];
 
@@ -52,7 +52,7 @@ abstract class QuestionState extends Equatable {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
-    List<String>? winners,
+    String? winner,
     bool? isWinner,
   });
 }
@@ -82,17 +82,16 @@ class LoadingState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
-    List<String>? winners,
+    String? winner,
     bool? isWinner,
   }) {
-    return const LoadingState();
+    return LoadingState();
   }
 }
 
 class PregameState extends QuestionState {
   const PregameState({
     required List<String> players,
-    required Map<String, int> score,
     required RoundStatus roundStatus,
   }) : super(
           players: const <String>[],
@@ -117,12 +116,11 @@ class PregameState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
-    List<String>? winners,
+    String? winner,
     bool? isWinner,
   }) {
     return PregameState(
       players: players ?? this.players,
-      score: scores ?? this.scores,
       roundStatus: roundStatus ?? this.roundStatus,
     );
   }
@@ -139,7 +137,7 @@ class PlayingState extends QuestionState {
     required int startTime,
     required AnswerStatus answerStatus,
     required RoundStatus roundStatus,
-    required List<String> winners,
+    String winner = '',
     required bool isWinner,
   }) : super(
           players: const <String>[],
@@ -151,7 +149,7 @@ class PlayingState extends QuestionState {
           startTime: startTime,
           answerStatus: answerStatus,
           roundStatus: roundStatus,
-          winners: winners,
+          winner: winner,
           isWinner: isWinner,
         );
 
@@ -166,7 +164,7 @@ class PlayingState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
-    List<String>? winners,
+    String? winner,
     bool? isWinner,
   }) {
     return PlayingState(
@@ -179,17 +177,19 @@ class PlayingState extends QuestionState {
       startTime: startTime ?? this.startTime,
       answerStatus: answerStatus ?? this.answerStatus,
       roundStatus: roundStatus ?? this.roundStatus,
-      winners: winners ?? this.winners,
+      winner: winner ?? this.winner,
       isWinner: isWinner ?? this.isWinner,
     );
   }
 }
 
 class GameCompleteState extends QuestionState {
-  const GameCompleteState()
-      : super(
+  const GameCompleteState({
+    required Map<String, int> scores,
+    required this.winners,
+  }) : super(
           players: const <String>[],
-          scores: const <String, int>{},
+          scores: scores,
           question: '',
           choices: const [],
           selected: -1,
@@ -198,6 +198,8 @@ class GameCompleteState extends QuestionState {
           answerStatus: AnswerStatus.answered,
           roundStatus: RoundStatus.ready,
         );
+
+  final List<String> winners;
 
   @override
   GameCompleteState copyWith({
@@ -210,9 +212,13 @@ class GameCompleteState extends QuestionState {
     int? startTime,
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
-    List<String>? winners,
+    String? winner,
     bool? isWinner,
+    List<String>? winners,
   }) {
-    return const GameCompleteState();
+    return GameCompleteState(
+      scores: scores ?? this.scores,
+      winners: winners ?? this.winners,
+    );
   }
 }
