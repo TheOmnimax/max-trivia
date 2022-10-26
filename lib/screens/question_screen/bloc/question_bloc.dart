@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/utils/http.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 part 'question_event.dart';
 part 'question_state.dart';
@@ -17,124 +18,122 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }) : super(const LoadingState()) {
     on<LoadGame>(_loadGame);
     on<StartGame>(_startGame);
+    on<StartGameResponse>(_startGameResponse);
     on<LoadQuestion>(_loadQuestion);
     on<SelectChoice>(_selectChoice);
-    on<TimeUp>(_timeUp);
+    on<RoundComplete>(_roundComplete);
     on<NextRound>(_nextRound);
     on<GameComplete>(_gameComplete);
-  }
 
-  final AppBloc appBloc;
-  Timer? timer;
+    final socket = appBloc.socket;
 
-  Future _checkServer() async {
-    final int checkinTime;
-    if (state.roundStatus == RoundStatus.playing) {
-      checkinTime = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    } else {
-      checkinTime = 0;
-    }
-    final response = await Http.post(
-      uri: '${baseUrl}player-checkin',
-      body: {
-        'room_code': appBloc.state.roomCode,
-        'player_id': appBloc.state.playerId,
-        'time': checkinTime,
-        'ready': state.roundStatus == RoundStatus.ready,
-      },
-    );
-    final data = Http.jsonDecode(response.body);
-    if (data.containsKey('started') && (data['started'] as bool == false)) {
-      // If game not yet started
-      final players = List<String>.from(data['player_names']);
-      final scoresRaw = data['scores'] as Map<String, dynamic>;
-      final scores = <String, int>{};
-      for (final name in scoresRaw.keys) {
-        scores[name] = scoresRaw[name] as int;
-      }
-      emit(state.copyWith(
-        players: players,
-        scores: scores,
-      ));
-    } else if (data['round_complete'] as bool) {
-      final roundStatus = state.roundStatus;
-      final correct = data['correct'] as int;
-      final gameComplete = data['game_complete'] as bool;
-      final AnswerStatus status;
-      if (roundStatus == RoundStatus.answered) {
-        status = AnswerStatus
-            .winner; // TODO: Update with checks from the server to see if they were really the winner
-      } else {
-        status = AnswerStatus.noAnswer;
-      }
-
-      final winners = List<String>.from(data['winners']);
+    socket.on('round-complete', (data) {
+      print('Event: Round complete');
       final isWinner = data['is_winner'] as bool;
+      final winnerName = data['winner_name'] as String;
+      final correct = data['correct'] as int;
 
       add(
-        TimeUp(
-          status: status,
+        RoundComplete(
           correct: correct,
-          gameComplete: gameComplete,
-          winners: winners,
+          winner: winnerName,
           isWinner: isWinner,
         ),
       );
-    } else if (state.roundStatus == RoundStatus.ready) {
+    });
+
+    socket.on('next-round', (data) {
+      print('Event: Next round');
       final question = data['question'] as String;
       final choices = List<String>.from(data['choices']);
       add(LoadQuestion(
         question: question,
         choices: choices,
       ));
-    } else {}
+    });
+
+    appBloc.socket.on('game-status', (data) {
+      print('Event: Game status');
+      final players = List<String>.from(data['player_names']);
+      if (state is LoadingState) {
+        print('Pregame state');
+        emit(
+          PregameState(
+            players: players,
+            roundStatus: RoundStatus.answered,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            players: players,
+          ),
+        );
+      }
+    }); // END game-status event
+
+    appBloc.socket.on('game-complete', (data) {
+      print('Event: Game complete');
+      final scoresRaw = data['scores'] as Map<String, dynamic>;
+      final scores = <String, int>{};
+      print(scoresRaw);
+      print('Getting names');
+      for (final name in scoresRaw.keys) {
+        print(name);
+        scores[name] = scoresRaw[name] as int;
+      }
+      print('Getting winnners: ${data['winners']}');
+      final winners = List<String>.from(data['winners']);
+      print('Adding event');
+      add(
+        GameComplete(
+          scores: scores,
+          winners: winners,
+        ),
+      );
+      print('Added');
+    });
   }
 
-  void _serverQuery() {
-    const duration = Duration(seconds: 2);
-
-    timer = Timer.periodic(duration, (Timer t) async => await _checkServer());
-  }
+  final AppBloc appBloc;
+  Timer? timer;
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
-    _serverQuery();
-    if (appBloc.state.isHost) {
-      emit(const PregameState(
-        players: [],
-        score: {},
-        roundStatus: RoundStatus.answered,
-      ));
-    } else {
-      emit(const PregameState(
-        players: [],
-        score: {},
-        roundStatus: RoundStatus.ready,
-      ));
-    }
+    appBloc.socket.emit('pregame-status', {
+      'player_id': appBloc.state.playerId,
+      'room_code': appBloc.state.roomCode,
+    });
   }
 
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
     emit(const PregameState(
       players: [],
-      score: {},
       roundStatus: RoundStatus.ready,
     ));
-    final response = await Http.post(uri: '${baseUrl}start-game', body: {
-      'room_code': appBloc.state.roomCode,
-      'host_id': appBloc.state.playerId,
+    appBloc.socket.emit(
+      'start-game',
+      {
+        'room_code': appBloc.state.roomCode,
+        'host_id': appBloc.state.playerId,
+      },
+    );
+
+    appBloc.socket.on('start-game', (body) {
+      print('Event: Start game');
+      print(body);
+      add(StartGameResponse(
+        allowed: body['allowed'] as bool,
+        started: body['started'] as bool,
+      ));
     });
-    final data = Http.jsonDecode(response.body);
-    // final successful = data['successful'] as bool;
+  }
+
+  void _startGameResponse(
+      StartGameResponse event, Emitter<QuestionState> emit) {
+    // TODO: Implement
   }
 
   Future _loadQuestion(LoadQuestion event, Emitter<QuestionState> emit) async {
-    // final int time;
-    // if (state.startTime == 0) {
-    //   time = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    // } else {
-    //   time = state.startTime;
-    // }
-
     emit(PlayingState(
       players: state.players,
       score: state.scores,
@@ -145,7 +144,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       roundStatus: RoundStatus.playing,
       selected: -1,
       correct: -1,
-      winners: [],
+      winner: '',
       isWinner: false,
     ));
   }
@@ -155,21 +154,17 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       roundStatus: RoundStatus.answered,
       selected: event.selected,
     ));
-    final time = DateTime.now().millisecondsSinceEpoch - state.startTime;
-    final response = await Http.post(
-      uri: '${baseUrl}answer-question',
-      body: {
-        'answer': event.selected,
-        'time': time,
-        'player_id': appBloc.state.playerId,
-        'room_code': appBloc.state.roomCode,
-      },
-    );
 
-    final body = Http.jsonDecode(response.body);
-    final correct = body['player_correct'] as bool;
+    appBloc.socket.emit('answer-question', {
+      'room_code': appBloc.state.roomCode,
+      'player_id': appBloc.state.playerId,
+      'answer': event.selected,
+    });
+  }
+
+  void _roundComplete(RoundComplete event, Emitter<QuestionState> emit) {
     final AnswerStatus status;
-    if (correct) {
+    if (event.isWinner) {
       status = AnswerStatus.correct;
     } else {
       status = AnswerStatus.incorrect;
@@ -177,27 +172,9 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
     emit(state.copyWith(
       answerStatus: status,
+      correct: event.correct,
+      winner: event.winner,
     ));
-  }
-
-  Future _timeUp(TimeUp event, Emitter<QuestionState> emit) async {
-    emit(
-      state.copyWith(
-        answerStatus: event.status,
-        roundStatus: RoundStatus.ready,
-        correct: event.correct,
-        winners: event.winners,
-        isWinner: event.isWinner,
-      ),
-    );
-
-    if (event.gameComplete) {
-      timer?.cancel();
-      print('Cancelled');
-      await Future.delayed(Duration(seconds: 2));
-      print('Completing game...');
-      emit(const GameCompleteState());
-    }
   }
 
   Future _nextRound(NextRound event, Emitter<QuestionState> emit) async {
@@ -211,6 +188,10 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   void _gameComplete(GameComplete event, Emitter<QuestionState> emit) {
-    emit(const GameCompleteState());
+    print('Emitting game complete');
+    emit(GameCompleteState(
+      scores: event.scores,
+      winners: event.winners,
+    ));
   }
 }

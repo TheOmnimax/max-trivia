@@ -39,32 +39,38 @@ class SelectChoice extends QuestionEvent {
   List<Object?> get props => [selected];
 }
 
-class StartRound extends QuestionEvent {
+class StartGameResponse extends QuestionEvent {
   // Got message from server to start round
-  const StartRound();
+  const StartGameResponse({
+    required this.allowed,
+    required this.started,
+  });
+
+  final bool allowed;
+  final bool started;
+
+  @override
+  List<Object?> get props => [allowed, started];
 }
 
-class TimeUp extends QuestionEvent {
-  const TimeUp({
-    required this.status,
+class RoundComplete extends QuestionEvent {
+  const RoundComplete({
     required this.correct,
     this.gameComplete = false,
-    required this.winners,
+    required this.winner,
     required this.isWinner,
   });
 
-  final AnswerStatus status;
   final int correct;
   final bool gameComplete;
-  final List<String> winners;
+  final String winner;
   final bool isWinner;
 
   @override
   List<Object?> get props => [
-        status,
         correct,
         gameComplete,
-        winners,
+        winner,
         isWinner,
       ];
 }
@@ -74,5 +80,14 @@ class NextRound extends QuestionEvent {
 }
 
 class GameComplete extends QuestionEvent {
-  const GameComplete();
+  const GameComplete({
+    required this.scores,
+    required this.winners,
+  });
+
+  final Map<String, int> scores;
+  final List<String> winners;
+
+  @override
+  List<Object?> get props => [scores, winners];
 }

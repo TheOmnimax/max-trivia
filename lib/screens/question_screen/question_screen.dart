@@ -59,9 +59,10 @@ class QuestionScreenMain extends StatelessWidget {
         body: BlocConsumer<QuestionBloc, QuestionState>(
           listener: (context, state) {
             if (state is GameCompleteState) {
+              print('Game complete new screen...');
               newScreen(
                 context: context,
-                screen: const GameCompleteScreen(),
+                screen: GameCompleteScreen(),
               );
             }
           },
@@ -73,8 +74,13 @@ class QuestionScreenMain extends StatelessWidget {
                 if (context.read<AppBloc>().state.isHost) {
                   return Column(
                     children: [
-                      Text(
-                          'Room code: ${context.read<AppBloc>().state.roomCode}'),
+                      Row(
+                        children: [
+                          Text('Room code: '),
+                          SelectableText(
+                              context.read<AppBloc>().state.roomCode),
+                        ],
+                      ),
                       TextButton(
                           onPressed: () {
                             context.read<QuestionBloc>().add(
@@ -131,13 +137,12 @@ class QuestionScreenMain extends StatelessWidget {
                             }
                           }),
                           Builder(builder: (context) {
-                            if (state.winners.length == 0) {
+                            if (state.winner.length == 0) {
                               return Text('No winner this round');
-                            } else if (state.winners.length == 1) {
-                              return Text('Winner: ${state.winners[0]}');
+                            } else if (state.winner.length == 1) {
+                              return Text('Winner: ${state.winner[0]}');
                             } else {
-                              return Text(
-                                  'Winners: ${state.winners.join(', ')}');
+                              return Text('Winner: ${state.winner}');
                             }
                           }),
                           Text('Please wait for next round...'),
@@ -152,7 +157,7 @@ class QuestionScreenMain extends StatelessWidget {
             } else if (state is GameCompleteState) {
               return Text('Please wait for results...');
             } else {
-              return Text('Invalid state: $state');
+              return Text('Invalid state on question screen: $state');
             }
           },
         ),
