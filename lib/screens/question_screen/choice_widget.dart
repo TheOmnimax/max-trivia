@@ -1,5 +1,59 @@
 part of 'question_screen.dart';
 
+class ChoiceBox extends StatelessWidget {
+  const ChoiceBox({
+    required this.label,
+    this.backgroundColor,
+    this.additionalChildren,
+    this.onPressed,
+    Key? key,
+  }) : super(key: key);
+
+  final String label;
+  final Color? backgroundColor;
+  final List<Widget>? additionalChildren;
+  final Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final textWidget = Text(
+      label,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 30.0,
+      ),
+    );
+    final children = <Widget>[textWidget];
+    if (additionalChildren != null) {
+      children.addAll(additionalChildren!);
+    }
+
+    final container = Container(
+      color: backgroundColor,
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: children,
+        ),
+      ),
+    );
+
+    final Widget child;
+    if (onPressed == null) {
+      return container;
+    } else {
+      return TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+        ),
+        onPressed: onPressed,
+        child: container,
+      );
+    }
+  }
+}
+
 class ChoiceWidget extends StatelessWidget {
   const ChoiceWidget({
     required this.choice,
@@ -20,72 +74,46 @@ class ChoiceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if ((selected == -1) && (correct == -1)) {
       // Still playing
-      return TextButton(
+      print('Still playing: $choice');
+      return ChoiceBox(
+        backgroundColor: Color.fromARGB(100, 222, 222, 222),
+        label: choice,
         onPressed: onPressed,
-        child: Text(
-          choice,
-          style: const TextStyle(
-            fontSize: 30.0,
-          ),
-        ),
       );
     } else if ((selected == choiceValue) && (correct == choiceValue)) {
       // Player selected correct choice
-      return Container(
-        color: Colors.green,
-        child: Row(
-          children: [
-            Text(
-              choice, // TODO: Add better checkmark
-              style: const TextStyle(
-                fontSize: 30.0,
-              ),
-            ),
-            Icon(Icons.check),
-          ],
-        ),
+
+      return ChoiceBox(
+        backgroundColor: Colors.green,
+        label: choice,
+        additionalChildren: [Icon(Icons.check)],
       );
     } else if ((selected == -1) && (correct == choiceValue)) {
       // User did not select a choice, and this was the correct choice
-      return Text(
-        choice,
-        style: const TextStyle(
-          fontSize: 30.0,
-          backgroundColor: Colors.grey,
-        ),
+      return ChoiceBox(
+        label: choice,
+        backgroundColor: Colors.grey,
       );
     } else if ((selected == choiceValue) && (correct == -1)) {
       // This was the selected choice, but we don't know the correct choice yet
-      return Text(
-        choice,
-        style: const TextStyle(
-          fontSize: 30.0,
-          backgroundColor: Colors.lightGreenAccent,
-        ),
+      return ChoiceBox(
+        label: choice,
+        backgroundColor: Colors.lightGreenAccent,
       );
     } else if (selected == choiceValue) {
       // This was the selected choice, but it was wrong
-      return Text(
-        choice,
-        style: const TextStyle(
-          fontSize: 30.0,
-          backgroundColor: Colors.redAccent,
-        ),
+      return ChoiceBox(
+        label: choice,
+        backgroundColor: Colors.redAccent,
       );
     } else if (correct == choiceValue) {
-      return Text(
-        choice,
-        style: const TextStyle(
-          fontSize: 30.0,
-          backgroundColor: Colors.green,
-        ),
+      return ChoiceBox(
+        label: choice,
+        backgroundColor: Colors.green,
       );
     } else {
-      return Text(
-        choice,
-        style: const TextStyle(
-          fontSize: 30.0,
-        ),
+      return ChoiceBox(
+        label: choice,
       );
     }
   }
