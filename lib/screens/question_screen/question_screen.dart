@@ -4,7 +4,11 @@ import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/screens/game_complete_screen/game_complete_screen.dart';
 import 'package:max_trivia/screens/question_screen/bloc/question_bloc.dart';
+import 'package:max_trivia/shared_widgets/buttons.dart';
+import 'package:max_trivia/shared_widgets/shared_widgets.dart';
 import 'package:max_trivia/utils/navigation.dart';
+
+import '../../shared_widgets/loading.dart';
 
 part 'choice_widget.dart';
 
@@ -78,16 +82,22 @@ class QuestionScreenMain extends StatelessWidget {
                         children: [
                           Text('Room code: '),
                           SelectableText(
-                              context.read<AppBloc>().state.roomCode),
+                            context
+                                .read<AppBloc>()
+                                .state
+                                .roomCode
+                                .toUpperCase(),
+                          ),
                         ],
                       ),
-                      TextButton(
-                          onPressed: () {
-                            context.read<QuestionBloc>().add(
-                                  const StartGame(),
-                                );
-                          },
-                          child: const Text('Start')),
+                      ScreenButton(
+                        onPressed: () {
+                          context.read<QuestionBloc>().add(
+                                const StartGame(),
+                              );
+                        },
+                        label: 'Start',
+                      )
                     ],
                   );
                 } else {

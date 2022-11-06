@@ -49,7 +49,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
       }
     });
     appBloc.socket.emit('add-player', {
-      'room_code': event.roomCode,
+      'room_code': event.roomCode.toLowerCase(),
       'player_name': event.name,
     });
 
