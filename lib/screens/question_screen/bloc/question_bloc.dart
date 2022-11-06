@@ -45,9 +45,11 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
     socket.on('next-round', (data) {
       print('Event: Next round');
+      final roundNum = data['round_num'] as int;
       final question = data['question'] as String;
       final choices = List<String>.from(data['choices']);
       add(LoadQuestion(
+        roundNum: roundNum,
         question: question,
         choices: choices,
       ));
@@ -100,6 +102,10 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   Timer? timer;
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
+    appBloc.socket.on('game-status', (data) {
+      final players = List<String>.from(data['player_names']);
+      emit(PregameState(players: players, roundStatus: RoundStatus.ready));
+    });
     appBloc.socket.emit('pregame-status', {
       'player_id': appBloc.state.playerId,
       'room_code': appBloc.state.roomCode,
@@ -138,6 +144,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     emit(PlayingState(
       players: state.players,
       score: state.scores,
+      roundNum: event.roundNum,
       question: event.question,
       choices: event.choices,
       startTime: DateTime.now().millisecondsSinceEpoch,
@@ -157,6 +164,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     ));
 
     appBloc.socket.emit('answer-question', {
+      'round': state.roundNum,
       'room_code': appBloc.state.roomCode,
       'player_id': appBloc.state.playerId,
       'answer': event.selected,
@@ -167,7 +175,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     final AnswerStatus status;
     if (event.isWinner) {
       status = AnswerStatus.winner;
-    } else if (state.selected == state.correct) {
+    } else if (state.selected == event.correct) {
       // Correct answer, but someone else was faster
       status = AnswerStatus.correct;
     } else {
