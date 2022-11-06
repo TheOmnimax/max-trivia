@@ -11,6 +11,28 @@ class LoadGame extends QuestionEvent {
   const LoadGame();
 }
 
+class ShowPregame extends QuestionEvent {
+  const ShowPregame({
+    required this.players,
+  });
+
+  final List<String> players;
+
+  @override
+  List<Object?> get props => [players];
+}
+
+class AddPlayer extends QuestionEvent {
+  const AddPlayer({
+    required this.players,
+  });
+
+  final List<String> players;
+
+  @override
+  List<Object?> get props => [players];
+}
+
 class StartGame extends QuestionEvent {
   const StartGame();
 }
