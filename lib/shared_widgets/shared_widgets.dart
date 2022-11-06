@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'loading.dart';
-
 class DefaultScaffold extends StatelessWidget {
   const DefaultScaffold({
     required this.child,
@@ -23,7 +21,7 @@ class DefaultScaffold extends StatelessWidget {
             ),
             width: double.infinity,
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(0),
               child: child,
             ),
           ),
@@ -34,8 +32,8 @@ class DefaultScaffold extends StatelessWidget {
 }
 
 class GenericText extends StatelessWidget {
-  const GenericText({
-    required this.label,
+  const GenericText(
+    this.label, {
     Key? key,
   }) : super(key: key);
 
