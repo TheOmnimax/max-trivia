@@ -103,12 +103,11 @@ class QuestionScreenMain extends StatelessWidget {
                   ],
                 );
               } else {
-                return GenericText(
-                    label: 'Please wait for host to start game...');
+                return GenericText('Please wait for host to start game...');
               }
             }
             if (state.roundStatus == RoundStatus.ready) {
-              return GenericText(label: 'About to start, get ready...');
+              return GenericText('About to start, get ready...');
             } else {
               return Text('Invalid round status: ${state.roundStatus}');
             }
@@ -132,8 +131,38 @@ class QuestionScreenMain extends StatelessWidget {
                 ),
                 Builder(builder: (context) {
                   if (state.roundStatus == RoundStatus.answered) {
-                    return Text(
-                        'Please wait for the other players to finish up...');
+                    switch (state.answerStatus) {
+                      case AnswerStatus.waiting:
+                        {
+                          return GenericText('Waiting for results...');
+                        }
+                      case AnswerStatus.answered:
+                        {
+                          return GenericText(
+                              'Please wait for the other players to finish up...');
+                        }
+                      case AnswerStatus.noAnswer:
+                        {
+                          return GenericText('Round complete');
+                        }
+                      case AnswerStatus.winner:
+                        {
+                          return GenericText('Winner!');
+                        }
+                      case AnswerStatus.correct:
+                        {
+                          return GenericText(
+                              'Correct, but someone else was faster!');
+                        }
+                      case AnswerStatus.incorrect:
+                        {
+                          return GenericText('Incorrect!');
+                        }
+                      default:
+                        {
+                          return GenericText('Unknown status when answered');
+                        }
+                    }
                   } else if (state.roundStatus == RoundStatus.ready) {
                     return Column(
                       children: [

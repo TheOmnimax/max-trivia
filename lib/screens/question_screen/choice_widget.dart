@@ -3,7 +3,8 @@ part of 'question_screen.dart';
 class ChoiceBox extends StatelessWidget {
   const ChoiceBox({
     required this.label,
-    this.backgroundColor,
+    this.backgroundColor = const Color.fromARGB(100, 222, 222, 222),
+    // this.backgroundColor = Colors.black,
     this.additionalChildren,
     this.onPressed,
     Key? key,
@@ -16,11 +17,13 @@ class ChoiceBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textWidget = Text(
-      label,
-      style: const TextStyle(
-        color: Colors.black,
-        fontSize: 30.0,
+    final textWidget = Flexible(
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 30.0,
+        ),
       ),
     );
     final children = <Widget>[textWidget];
@@ -28,13 +31,16 @@ class ChoiceBox extends StatelessWidget {
       children.addAll(additionalChildren!);
     }
 
-    final container = Container(
-      color: backgroundColor,
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: children,
+    final container = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Container(
+        color: backgroundColor,
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: children,
+          ),
         ),
       ),
     );
@@ -74,9 +80,7 @@ class ChoiceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if ((selected == -1) && (correct == -1)) {
       // Still playing
-      print('Still playing: $choice');
       return ChoiceBox(
-        backgroundColor: Color.fromARGB(100, 222, 222, 222),
         label: choice,
         onPressed: onPressed,
       );

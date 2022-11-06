@@ -29,6 +29,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
     socket.on('round-complete', (data) {
       print('Event: Round complete');
+      print(data);
       final isWinner = data['is_winner'] as bool;
       final winnerName = data['winner_name'] as String;
       final correct = data['correct'] as int;
@@ -165,6 +166,9 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   void _roundComplete(RoundComplete event, Emitter<QuestionState> emit) {
     final AnswerStatus status;
     if (event.isWinner) {
+      status = AnswerStatus.winner;
+    } else if (state.selected == state.correct) {
+      // Correct answer, but someone else was faster
       status = AnswerStatus.correct;
     } else {
       status = AnswerStatus.incorrect;
