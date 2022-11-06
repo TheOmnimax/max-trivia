@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/screens/create_game_screen/bloc/create_game_bloc.dart';
 import 'package:max_trivia/screens/question_screen/question_screen.dart';
+import 'package:max_trivia/shared_widgets/buttons.dart';
 import 'package:max_trivia/shared_widgets/form_input.dart';
 import 'package:max_trivia/shared_widgets/loading.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
@@ -80,7 +81,7 @@ class _CreateGameMainState extends State<CreateGameMain> {
                   }
                 },
               ),
-              ConfirmButton(
+              ScreenButton(
                   onPressed: () async {
                     createKey.currentState!.validate();
                     if (playerName != '') {

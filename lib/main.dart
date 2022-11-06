@@ -41,6 +41,7 @@ class Main extends StatelessWidget {
       title: 'Max Trivia',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'LexandDeca',
       ),
       initialRoute: '/',
       routes: {
