@@ -100,7 +100,7 @@ class PregameState extends QuestionState {
     required List<String> players,
     required RoundStatus roundStatus,
   }) : super(
-          players: const <String>[],
+          players: players,
           scores: const <String, int>{},
           question: '',
           choices: const [],
