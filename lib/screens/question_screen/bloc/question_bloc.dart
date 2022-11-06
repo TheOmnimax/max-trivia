@@ -17,6 +17,8 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     required this.appBloc,
   }) : super(const LoadingState()) {
     on<LoadGame>(_loadGame);
+    on<ShowPregame>(_showPregame);
+    on<AddPlayer>(_addPlayer);
     on<StartGame>(_startGame);
     on<StartGameResponse>(_startGameResponse);
     on<LoadQuestion>(_loadQuestion);
@@ -28,8 +30,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     final socket = appBloc.socket;
 
     socket.on('round-complete', (data) {
-      print('Event: Round complete');
-      print(data);
       final isWinner = data['is_winner'] as bool;
       final winnerName = data['winner_name'] as String;
       final correct = data['correct'] as int;
@@ -59,19 +59,9 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       print('Event: Game status');
       final players = List<String>.from(data['player_names']);
       if (state is LoadingState) {
-        print('Pregame state');
-        emit(
-          PregameState(
-            players: players,
-            roundStatus: RoundStatus.answered,
-          ),
-        );
+        add(ShowPregame(players: players));
       } else {
-        emit(
-          state.copyWith(
-            players: players,
-          ),
-        );
+        add(AddPlayer(players: players));
       }
     }); // END game-status event
 
@@ -102,14 +92,19 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   Timer? timer;
 
   Future _loadGame(LoadGame event, Emitter<QuestionState> emit) async {
-    appBloc.socket.on('game-status', (data) {
-      final players = List<String>.from(data['player_names']);
-      emit(PregameState(players: players, roundStatus: RoundStatus.ready));
-    });
     appBloc.socket.emit('pregame-status', {
       'player_id': appBloc.state.playerId,
       'room_code': appBloc.state.roomCode,
     });
+  }
+
+  void _showPregame(ShowPregame event, Emitter<QuestionState> emit) {
+    emit(PregameState(
+        players: event.players, roundStatus: RoundStatus.answered));
+  }
+
+  void _addPlayer(AddPlayer event, Emitter<QuestionState> emit) {
+    emit(state.copyWith(players: event.players));
   }
 
   Future _startGame(StartGame event, Emitter<QuestionState> emit) async {
@@ -200,7 +195,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   }
 
   void _gameComplete(GameComplete event, Emitter<QuestionState> emit) {
-    print('Emitting game complete');
     emit(GameCompleteState(
       scores: event.scores,
       winners: event.winners,

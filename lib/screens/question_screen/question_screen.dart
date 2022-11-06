@@ -105,8 +105,7 @@ class QuestionScreenMain extends StatelessWidget {
               } else {
                 return GenericText('Please wait for host to start game...');
               }
-            }
-            if (state.roundStatus == RoundStatus.ready) {
+            } else if (state.roundStatus == RoundStatus.ready) {
               return GenericText('About to start, get ready...');
             } else {
               return Text('Invalid round status: ${state.roundStatus}');
