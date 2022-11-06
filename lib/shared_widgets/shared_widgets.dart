@@ -32,3 +32,24 @@ class DefaultScaffold extends StatelessWidget {
     );
   }
 }
+
+class GenericText extends StatelessWidget {
+  const GenericText({
+    required this.label,
+    Key? key,
+  }) : super(key: key);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          label,
+        ),
+      ],
+    );
+  }
+}
