@@ -99,11 +99,15 @@ class QuestionScreenMain extends StatelessWidget {
                             );
                       },
                       label: 'Start',
-                    )
+                    ),
+                    Text('Players: ${state.players.join(', ')}'),
                   ],
                 );
               } else {
-                return GenericText('Please wait for host to start game...');
+                return GenericText(
+                  'Please wait for host to start game...',
+                  addLabels: ['Players: ${state.players.join(', ')}'],
+                );
               }
             } else if (state.roundStatus == RoundStatus.ready) {
               return GenericText('About to start, get ready...');

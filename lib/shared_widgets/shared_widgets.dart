@@ -34,20 +34,24 @@ class DefaultScaffold extends StatelessWidget {
 class GenericText extends StatelessWidget {
   const GenericText(
     this.label, {
+    this.addLabels = const <String>[],
     Key? key,
   }) : super(key: key);
 
   final String label;
+  final List<String> addLabels;
 
   @override
   Widget build(BuildContext context) {
+    final textWidgets = <Widget>[Text(label)];
+
+    for (final l in addLabels) {
+      textWidgets.add(Text(l));
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          label,
-        ),
-      ],
+      children: textWidgets,
     );
   }
 }
