@@ -24,6 +24,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
   Future _joinGame(JoinGame event, Emitter<JoinGameState> emit) async {
     print('Joining...');
     emit(const JoiningState());
+    final roomCode = event.roomCode.toLowerCase();
     var noResponse = true;
     appBloc.socket.on('add-player', (data) {
       noResponse = false;
@@ -32,7 +33,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
         final playerId = data['player_id'] as String;
         add(
           JoinSuccess(
-            roomCode: event.roomCode,
+            roomCode: roomCode,
             playerId: playerId,
             playerName: event.name,
           ),
@@ -49,7 +50,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
       }
     });
     appBloc.socket.emit('add-player', {
-      'room_code': event.roomCode.toLowerCase(),
+      'room_code': roomCode,
       'player_name': event.name,
     });
 

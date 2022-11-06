@@ -17,15 +17,21 @@ class StartGame extends QuestionEvent {
 
 class LoadQuestion extends QuestionEvent {
   const LoadQuestion({
+    required this.roundNum,
     required this.question,
     required this.choices,
   });
 
+  final int roundNum;
   final String question;
   final List<String> choices;
 
   @override
-  List<Object?> get props => [question, choices];
+  List<Object?> get props => [
+        question,
+        choices,
+        roundNum,
+      ];
 }
 
 class SelectChoice extends QuestionEvent {

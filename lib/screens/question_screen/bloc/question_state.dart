@@ -10,6 +10,7 @@ abstract class QuestionState extends Equatable {
     required this.correct,
     required this.startTime,
     required this.answerStatus,
+    required this.roundNum,
     required this.roundStatus,
     this.winner = '',
     this.isWinner = false,
@@ -26,6 +27,7 @@ abstract class QuestionState extends Equatable {
   final RoundStatus roundStatus;
   final String winner;
   final bool isWinner;
+  final int roundNum;
 
   @override
   List<Object?> get props => [
@@ -40,6 +42,7 @@ abstract class QuestionState extends Equatable {
         roundStatus,
         winner,
         isWinner,
+        roundNum,
       ];
 
   QuestionState copyWith({
@@ -54,6 +57,7 @@ abstract class QuestionState extends Equatable {
     RoundStatus? roundStatus,
     String? winner,
     bool? isWinner,
+    int? roundNum,
   });
 }
 
@@ -69,6 +73,7 @@ class LoadingState extends QuestionState {
           startTime: 0,
           answerStatus: AnswerStatus.noAnswer,
           roundStatus: RoundStatus.ready,
+          roundNum: 0,
         );
 
   @override
@@ -84,6 +89,7 @@ class LoadingState extends QuestionState {
     RoundStatus? roundStatus,
     String? winner,
     bool? isWinner,
+    int? roundNum,
   }) {
     return LoadingState();
   }
@@ -103,6 +109,7 @@ class PregameState extends QuestionState {
           startTime: 0,
           answerStatus: AnswerStatus.noAnswer,
           roundStatus: roundStatus,
+          roundNum: 0,
         );
 
   @override
@@ -118,6 +125,7 @@ class PregameState extends QuestionState {
     RoundStatus? roundStatus,
     String? winner,
     bool? isWinner,
+    int? roundNum,
   }) {
     return PregameState(
       players: players ?? this.players,
@@ -137,11 +145,13 @@ class PlayingState extends QuestionState {
     required int startTime,
     required AnswerStatus answerStatus,
     required RoundStatus roundStatus,
+    required int roundNum,
     String winner = '',
     required bool isWinner,
   }) : super(
           players: const <String>[],
           scores: const <String, int>{},
+          roundNum: roundNum,
           question: question,
           choices: choices,
           selected: selected,
@@ -166,10 +176,12 @@ class PlayingState extends QuestionState {
     RoundStatus? roundStatus,
     String? winner,
     bool? isWinner,
+    int? roundNum,
   }) {
     return PlayingState(
       players: players ?? this.players,
       score: scores ?? this.scores,
+      roundNum: roundNum ?? this.roundNum,
       question: question ?? this.question,
       choices: choices ?? this.choices,
       selected: selected ?? this.selected,
@@ -192,6 +204,7 @@ class GameCompleteState extends QuestionState {
           scores: scores,
           question: '',
           choices: const [],
+          roundNum: -1,
           selected: -1,
           correct: -1,
           startTime: 0,
@@ -215,6 +228,7 @@ class GameCompleteState extends QuestionState {
     String? winner,
     bool? isWinner,
     List<String>? winners,
+    int? roundNum,
   }) {
     return GameCompleteState(
       scores: scores ?? this.scores,
