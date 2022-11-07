@@ -19,16 +19,16 @@ class ScreenButton extends StatelessWidget {
         width: 90,
         child: TextButton(
           onPressed: onPressed,
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.black,
+            backgroundColor: const Color.fromARGB(100, 158, 208, 240),
+          ),
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20.0,
               fontFamily: 'Lexend Deca',
             ),
-          ),
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.black,
-            backgroundColor: Color.fromARGB(100, 158, 208, 240),
           ),
         ),
       ),

@@ -51,20 +51,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _appOpened(AppOpened event, Emitter<AppState> emit) {
     // final currentUser = _auth.currentUser;
     // final username = currentUser?.email ?? '';
-
-    print('Connecting to $baseUrl...');
-
-    socket.onConnect((connectData) {
-      print('Connected');
-      print(connectData);
-    });
     socket.connect();
-    print('Connecting complete');
-    // emit(state.copyWith());
-    socket.on('message', (data) {
-      print('General');
-      print(data);
-    });
   }
 
   LoginResult? checkCredentials({

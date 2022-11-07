@@ -45,7 +45,6 @@ class ChoiceBox extends StatelessWidget {
       ),
     );
 
-    final Widget child;
     if (onPressed == null) {
       return container;
     } else {
@@ -90,7 +89,7 @@ class ChoiceWidget extends StatelessWidget {
       return ChoiceBox(
         backgroundColor: Colors.green,
         label: choice,
-        additionalChildren: [Icon(Icons.check)],
+        additionalChildren: const [Icon(Icons.check)],
       );
     } else if ((selected == -1) && (correct == choiceValue)) {
       // User did not select a choice, and this was the correct choice

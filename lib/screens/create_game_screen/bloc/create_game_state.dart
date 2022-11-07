@@ -44,7 +44,7 @@ class CreatingState extends CreateGameState {
   CreatingState copyWith({
     JoinStatus? joinStatus,
   }) {
-    return CreatingState();
+    return const CreatingState();
   }
 }
 
@@ -58,6 +58,6 @@ class LoadingState extends CreateGameState {
   LoadingState copyWith({
     JoinStatus? joinStatus,
   }) {
-    return LoadingState();
+    return const LoadingState();
   }
 }

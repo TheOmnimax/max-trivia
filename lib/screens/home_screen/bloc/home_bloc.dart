@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:max_trivia/constants/constants.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';

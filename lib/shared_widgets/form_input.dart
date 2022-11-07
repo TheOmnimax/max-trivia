@@ -40,10 +40,10 @@ class _TextInputState extends State<TextInput> {
           decoration: InputDecoration(
               counterText: '',
               filled: true,
-              fillColor: Color.fromARGB(100, 237, 237, 237),
+              fillColor: const Color.fromARGB(100, 237, 237, 237),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.blueAccent,
                     width: 1.0,
                   )),

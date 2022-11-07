@@ -103,10 +103,6 @@ class RoundComplete extends QuestionEvent {
       ];
 }
 
-class NextRound extends QuestionEvent {
-  const NextRound();
-}
-
 class GameComplete extends QuestionEvent {
   const GameComplete({
     required this.scores,

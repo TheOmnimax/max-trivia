@@ -4,8 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
-import 'package:max_trivia/utils/http.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 part 'question_event.dart';
 part 'question_state.dart';
@@ -24,7 +22,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     on<LoadQuestion>(_loadQuestion);
     on<SelectChoice>(_selectChoice);
     on<RoundComplete>(_roundComplete);
-    on<NextRound>(_nextRound);
     on<GameComplete>(_gameComplete);
 
     final socket = appBloc.socket;
@@ -44,7 +41,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     });
 
     socket.on('next-round', (data) {
-      print('Event: Next round');
       final roundNum = data['round_num'] as int;
       final question = data['question'] as String;
       final choices = List<String>.from(data['choices']);
@@ -56,7 +52,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     });
 
     appBloc.socket.on('game-status', (data) {
-      print('Event: Game status');
       final players = List<String>.from(data['player_names']);
       if (state is LoadingState) {
         add(ShowPregame(players: players));
@@ -66,25 +61,18 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     }); // END game-status event
 
     appBloc.socket.on('game-complete', (data) {
-      print('Event: Game complete');
       final scoresRaw = data['scores'] as Map<String, dynamic>;
       final scores = <String, int>{};
-      print(scoresRaw);
-      print('Getting names');
       for (final name in scoresRaw.keys) {
-        print(name);
         scores[name] = scoresRaw[name] as int;
       }
-      print('Getting winnners: ${data['winners']}');
       final winners = List<String>.from(data['winners']);
-      print('Adding event');
       add(
         GameComplete(
           scores: scores,
           winners: winners,
         ),
       );
-      print('Added');
     });
   }
 
@@ -121,8 +109,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     );
 
     appBloc.socket.on('start-game', (body) {
-      print('Event: Start game');
-      print(body);
       add(StartGameResponse(
         allowed: body['allowed'] as bool,
         started: body['started'] as bool,
@@ -142,7 +128,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       roundNum: event.roundNum,
       question: event.question,
       choices: event.choices,
-      startTime: DateTime.now().millisecondsSinceEpoch,
       answerStatus: AnswerStatus.waiting,
       roundStatus: RoundStatus.playing,
       selected: -1,
@@ -182,16 +167,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       correct: event.correct,
       winner: event.winner,
     ));
-  }
-
-  Future _nextRound(NextRound event, Emitter<QuestionState> emit) async {
-    final response = await Http.post(
-      uri: '${baseUrl}next-round',
-      body: {
-        'room_code': appBloc.state.roomCode,
-        'host_id': appBloc.state.playerId,
-      },
-    );
   }
 
   void _gameComplete(GameComplete event, Emitter<QuestionState> emit) {
