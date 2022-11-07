@@ -39,10 +39,8 @@ class _CreateGameMainState extends State<CreateGameMain> {
     bool loading = false;
 
     void stopLoading() {
-      print('Loading: $loading');
       if (loading) {
         loading = false;
-        print('Popping');
         Navigator.pop(context);
       }
     }
@@ -82,29 +80,27 @@ class _CreateGameMainState extends State<CreateGameMain> {
                 },
               ),
               ScreenButton(
-                  onPressed: () async {
-                    createKey.currentState!.validate();
-                    if (playerName != '') {
-                      context.read<CreateGameBloc>().add(
-                            CreateGame(
-                              numRounds: 5, // NUMBER OF ROUNDS
-                              categories: ['19g8pnv6jujxzli9'],
-                              playerName: playerName,
-                            ),
-                          );
-                      print('Loading');
-                      loading = true;
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return LoadingDialog(context: context);
-                          });
-                    } else {
-                      // print('Invalid');
-                    }
-                  },
-                  label: 'Create'),
+                onPressed: () async {
+                  createKey.currentState!.validate();
+                  if (playerName != '') {
+                    context.read<CreateGameBloc>().add(
+                          CreateGame(
+                            numRounds: 5, // NUMBER OF ROUNDS
+                            categories: const ['19g8pnv6jujxzli9'],
+                            playerName: playerName,
+                          ),
+                        );
+                    loading = true;
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return LoadingDialog(context: context);
+                        });
+                  }
+                },
+                label: 'Create',
+              ),
             ],
           ),
         ),

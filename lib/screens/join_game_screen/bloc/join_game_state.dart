@@ -38,7 +38,7 @@ class JoiningState extends JoinGameState {
 
   @override
   JoiningState copyWith() {
-    return JoiningState();
+    return const JoiningState();
   }
 }
 

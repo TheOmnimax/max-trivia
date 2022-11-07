@@ -12,7 +12,7 @@ class DefaultScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color.fromARGB(100, 211, 228, 242),
+        backgroundColor: const Color.fromARGB(100, 211, 228, 242),
         body: Center(
           child: Container(
             // color: Color.fromARGB(100, 174, 211, 242),

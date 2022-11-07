@@ -18,7 +18,7 @@ class JoinGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      child: JoinGameMain(),
+      child: const JoinGameMain(),
       create: (context) => JoinGameBloc(appBloc: context.read<AppBloc>()),
     );
   }
@@ -40,10 +40,8 @@ class _JoinGameMainState extends State<JoinGameMain> {
     final joinKey = GlobalKey<FormState>();
 
     void stopLoading() {
-      print('Loading: $loading');
       if (loading) {
         loading = false;
-        print('Popping');
         Navigator.pop(context);
       }
     }
@@ -96,7 +94,6 @@ class _JoinGameMainState extends State<JoinGameMain> {
                     return 'Room code cannot be blank!';
                   } else {
                     final joinGameState = context.read<JoinGameBloc>().state;
-                    print(joinGameState.joinStatus);
                     final joinStatus = joinGameState.joinStatus;
                     if (joinGameState.joinStatus == JoinStatus.roomNotExists) {
                       stopLoading();

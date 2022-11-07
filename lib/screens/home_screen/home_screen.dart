@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/screens/create_game_screen/create_game_screen.dart';
 import 'package:max_trivia/screens/home_screen/bloc/home_bloc.dart';
 import 'package:max_trivia/screens/join_game_screen/join_game_screen.dart';
@@ -30,8 +29,8 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            'Version 1.0.2',
+          const Text(
+            'Version 1.0.0',
           ),
           ScreenButton(
             onPressed: () {
