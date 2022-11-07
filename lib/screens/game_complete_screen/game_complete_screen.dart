@@ -36,7 +36,7 @@ class GameCompleteMain extends StatelessWidget {
           final winners = state.winners;
 
           if (winners.isEmpty) {
-            return const Text('There were no winners! You guys stink.');
+            return const GenericText('There were no winners! You guys stink.');
           } else {
             List<Widget> winnerRows = <Widget>[];
             final scores = state.scores;
