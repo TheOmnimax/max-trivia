@@ -35,6 +35,7 @@ class QuestionScreenMain extends StatelessWidget {
     required Function(int) onSelected,
     int selected = -1,
     int correct = -1,
+    bool winner = false,
   }) {
     final choiceWidgets = <ChoiceWidget>[];
 
@@ -49,6 +50,7 @@ class QuestionScreenMain extends StatelessWidget {
           choiceValue: c,
           selected: selected,
           correct: correct,
+          winner: winner,
         ),
       );
     }
@@ -127,6 +129,7 @@ class QuestionScreenMain extends StatelessWidget {
                     },
                     selected: state.selected,
                     correct: state.correct,
+                    winner: state.answerStatus == AnswerStatus.winner,
                   ),
                 ),
                 Builder(builder: (context) {
@@ -164,33 +167,6 @@ class QuestionScreenMain extends StatelessWidget {
                               'Unknown status when answered');
                         }
                     }
-                  } else if (state.roundStatus == RoundStatus.ready) {
-                    return Column(
-                      children: [
-                        Builder(builder: (context) {
-                          if (state.isWinner) {
-                            return const Text('Round winner!');
-                          } else if (state.selected == state.correct) {
-                            return const Text(
-                                'Correct, but someone else was faster');
-                          } else if (state.selected == -1) {
-                            return const Text('Too slow!');
-                          } else {
-                            return const Text('Incorrect!');
-                          }
-                        }),
-                        Builder(builder: (context) {
-                          if (state.winner.isEmpty) {
-                            return const Text('No winner this round');
-                          } else if (state.winner.length == 1) {
-                            return Text('Winner: ${state.winner[0]}');
-                          } else {
-                            return Text('Winner: ${state.winner}');
-                          }
-                        }),
-                        const Text('Please wait for next round...'),
-                      ],
-                    );
                   } else {
                     return const Text('');
                   }
