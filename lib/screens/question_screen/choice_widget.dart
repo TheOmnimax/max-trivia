@@ -66,6 +66,7 @@ class ChoiceWidget extends StatelessWidget {
     required this.choiceValue,
     required this.selected,
     required this.correct,
+    required this.winner,
     Key? key,
   }) : super(key: key);
 
@@ -74,6 +75,7 @@ class ChoiceWidget extends StatelessWidget {
   final int choiceValue;
   final int selected;
   final int correct;
+  final bool winner;
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +87,18 @@ class ChoiceWidget extends StatelessWidget {
       );
     } else if ((selected == choiceValue) && (correct == choiceValue)) {
       // Player selected correct choice
-
-      return ChoiceBox(
-        backgroundColor: Colors.green,
-        label: choice,
-        additionalChildren: const [Icon(Icons.check)],
-      );
+      if (winner) {
+        return ChoiceBox(
+          backgroundColor: Colors.green,
+          label: choice,
+          additionalChildren: const [Icon(Icons.check)],
+        );
+      } else {
+        return ChoiceBox(
+          backgroundColor: const Color.fromARGB(100, 150, 207, 149),
+          label: choice,
+        );
+      }
     } else if ((selected == -1) && (correct == choiceValue)) {
       // User did not select a choice, and this was the correct choice
       return ChoiceBox(
@@ -112,7 +120,7 @@ class ChoiceWidget extends StatelessWidget {
     } else if (correct == choiceValue) {
       return ChoiceBox(
         label: choice,
-        backgroundColor: const Color.fromARGB(100, 160, 196, 153),
+        backgroundColor: Colors.green,
       );
     } else {
       return ChoiceBox(
