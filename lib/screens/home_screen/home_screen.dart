@@ -29,6 +29,7 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const GenericText('Max Trivia!'),
           const Text(
             'Version 1.0.0',
           ),
@@ -50,7 +51,6 @@ class HomePage extends StatelessWidget {
             },
             label: 'Join',
           ),
-          TextInput(label: 'Test', onChanged: (data) {})
         ],
       ),
     );

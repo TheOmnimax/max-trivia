@@ -112,7 +112,7 @@ class ChoiceWidget extends StatelessWidget {
     } else if (correct == choiceValue) {
       return ChoiceBox(
         label: choice,
-        backgroundColor: Colors.green,
+        backgroundColor: const Color.fromARGB(100, 160, 196, 153),
       );
     } else {
       return ChoiceBox(
