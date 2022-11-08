@@ -12,7 +12,6 @@ abstract class QuestionState extends Equatable {
     required this.answerStatus,
     required this.roundNum,
     this.winner = '',
-    this.isWinner = false,
   });
 
   final List<String> players;
@@ -26,7 +25,6 @@ abstract class QuestionState extends Equatable {
   final AnswerStatus answerStatus;
   final RoundStatus roundStatus;
   final String winner;
-  final bool isWinner;
 
   @override
   List<Object?> get props => [
@@ -40,7 +38,6 @@ abstract class QuestionState extends Equatable {
         answerStatus,
         roundStatus,
         winner,
-        isWinner,
       ];
 
   QuestionState copyWith({
@@ -54,7 +51,6 @@ abstract class QuestionState extends Equatable {
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
     String? winner,
-    bool? isWinner,
   });
 }
 
@@ -84,7 +80,6 @@ class LoadingState extends QuestionState {
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
     String? winner,
-    bool? isWinner,
   }) {
     return const LoadingState();
   }
@@ -118,7 +113,6 @@ class PregameState extends QuestionState {
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
     String? winner,
-    bool? isWinner,
   }) {
     return PregameState(
       players: players ?? this.players,
@@ -139,7 +133,6 @@ class PlayingState extends QuestionState {
     required AnswerStatus answerStatus,
     required RoundStatus roundStatus,
     String winner = '',
-    required bool isWinner,
   }) : super(
           players: const <String>[],
           scores: const <String, int>{},
@@ -151,7 +144,6 @@ class PlayingState extends QuestionState {
           answerStatus: answerStatus,
           roundStatus: roundStatus,
           winner: winner,
-          isWinner: isWinner,
         );
 
   @override
@@ -166,7 +158,6 @@ class PlayingState extends QuestionState {
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
     String? winner,
-    bool? isWinner,
   }) {
     return PlayingState(
       players: players ?? this.players,
@@ -179,7 +170,6 @@ class PlayingState extends QuestionState {
       answerStatus: answerStatus ?? this.answerStatus,
       roundStatus: roundStatus ?? this.roundStatus,
       winner: winner ?? this.winner,
-      isWinner: isWinner ?? this.isWinner,
     );
   }
 }
@@ -215,7 +205,6 @@ class GameCompleteState extends QuestionState {
     AnswerStatus? answerStatus,
     RoundStatus? roundStatus,
     String? winner,
-    bool? isWinner,
     List<String>? winners,
   }) {
     return GameCompleteState(

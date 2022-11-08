@@ -133,7 +133,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       selected: -1,
       correct: -1,
       winner: '',
-      isWinner: false,
     ));
   }
 
