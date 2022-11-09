@@ -4,9 +4,13 @@ This is a timed trivia game.
 
 This is a general overview of the app and how to play. To learn how it interacts with the server, check out the [trivia-server](https://github.com/TheOmnimax/trivia-server) repository. 
 
+## About
+
+This app was built using Flutter. It is meant to work as a web app.
+
 ## How to play
 
-The game is started by a host, and then guests can join the game. When the game starts,  everyone will see the question at the same time. Whomever answers the questions correctly first will win that round.
+The game is started by a host, and then guests can join the game. When the game starts, everyone will see the question at the same time. Whomever answers the questions correctly first will win that round. A round is over when either someone answers correctly, or everyone has answered, and everyone was wrong.
 
 ### New game
 
@@ -24,30 +28,9 @@ As players join the game, their names will be displayed for all players, so the 
 
 ### Play game
 
-Here is how the game will work when playing:
+Go to this page for a flowchart describing playing the game:
 
-```mermaid
-flowchart TD
-
-start[Start game] ==> dispQuestion[Show question]
-
-dispQuestion --> playerSelect[Player selects choice]
-playerSelect --> isCorrect{Is the player\ncorrect?}
-
-isCorrect --Yes--> playerCorrect[Give point to player who is correct]
-isCorrect --No--> morePlayers{Are there still players\nwho haven't answered yet?}
-
-playerCorrect --> nextQuestion[Go to next question]
-nextQuestion --> isNext{Is there a\nnext question?}
-
-morePlayers --Yes, there are still players who\nhaven't selected a choice yet--> playerSelect
-morePlayers --No, everyone has answered,\nand everyone was wrong--> nextQuestion
-
-isNext --Yes--> dispQuestion
-isNext --No--> endGame[End game, display results]
-
-
-```
+[Play flowchart](https://github.com/TheOmnimax/max-trivia/tree/main/play_flowchart.md)
 
 ## Answering a question
 
