@@ -10,8 +10,8 @@ start[Start game] ==> dispQuestion[Show question]
 dispQuestion --> playerSelect[Player selects choice]
 playerSelect --> isCorrect{Is the player\ncorrect?}
 
-isCorrect --Yes--> playerCorrect[Give point to player who is correct]
-isCorrect --No--> morePlayers{Are there still players\nwho haven't answered yet?}
+isCorrect --Yes--> playerCorrect[Give point to player\nwho is correct]
+isCorrect --No--> morePlayers{Are there still\nplayers who haven't\nanswered yet?}
 
 playerCorrect --> nextQuestion[Go to next question]
 nextQuestion --> isNext{Is there a\nnext question?}

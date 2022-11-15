@@ -2,7 +2,7 @@
 
 This is a timed trivia game. 
 
-This is a general overview of the app and how to play. To learn how it interacts with the server, check out the [trivia-server](https://github.com/TheOmnimax/trivia-server) repository. 
+This is a general overview of the app and how to play. **To learn how it interacts with the server, check out the [trivia-server](https://github.com/TheOmnimax/trivia-server) repository.**
 
 ## About
 
