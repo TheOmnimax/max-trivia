@@ -55,9 +55,9 @@ When a player answers a question, it will show their choice in light green, and 
 
 ## End game
 
-| <img src="docs/images/results.png" style="width:135px" /> |
-|:--:|
-| Results |
+| <img src="docs/images/results.png" style="width:135px" /> | <img src="docs/images/no_winners.jpg" style="width:135px" /> |
+|:--:|:--:|
+| Results | No winners |
 
 When the game is over, it will display the results, including all scores, and the winner (or winners if there was a tie for first).
 
