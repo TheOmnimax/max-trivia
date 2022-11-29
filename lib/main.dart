@@ -35,13 +35,14 @@ class Main extends StatelessWidget {
     return MaterialApp(
       title: 'Max Trivia',
       theme: ThemeData(
-          primarySwatch: Colors.blue,
-          fontFamily: 'LexandDeca',
-          textTheme: const TextTheme(
-            bodyMedium: TextStyle(
-              fontSize: 24,
-            ),
-          )),
+        primarySwatch: Colors.blue,
+        fontFamily: 'LexandDeca',
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontSize: 24,
+          ),
+        ),
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),

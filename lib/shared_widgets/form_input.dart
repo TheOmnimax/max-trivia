@@ -38,19 +38,20 @@ class _TextInputState extends State<TextInput> {
         child: TextFormField(
           controller: tc,
           decoration: InputDecoration(
-              counterText: '',
-              filled: true,
-              fillColor: const Color.fromARGB(100, 237, 237, 237),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(
-                    color: Colors.blueAccent,
-                    width: 1.0,
-                  )),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              labelText: widget.label),
+            counterText: '',
+            filled: true,
+            fillColor: const Color.fromARGB(100, 237, 237, 237),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.blueAccent,
+                  width: 1.0,
+                )),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            labelText: widget.label,
+          ),
           inputFormatters: widget.inputFormatters,
           maxLength: 20,
           maxLines: 1,
