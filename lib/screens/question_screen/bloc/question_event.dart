@@ -11,21 +11,49 @@ class LoadGame extends QuestionEvent {
   const LoadGame();
 }
 
+class ShowPregame extends QuestionEvent {
+  const ShowPregame({
+    required this.players,
+  });
+
+  final List<String> players;
+
+  @override
+  List<Object?> get props => [players];
+}
+
+class AddPlayer extends QuestionEvent {
+  const AddPlayer({
+    required this.players,
+  });
+
+  final List<String> players;
+
+  @override
+  List<Object?> get props => [players];
+}
+
 class StartGame extends QuestionEvent {
   const StartGame();
 }
 
 class LoadQuestion extends QuestionEvent {
   const LoadQuestion({
+    required this.roundNum,
     required this.question,
     required this.choices,
   });
 
+  final int roundNum;
   final String question;
   final List<String> choices;
 
   @override
-  List<Object?> get props => [question, choices];
+  List<Object?> get props => [
+        question,
+        choices,
+        roundNum,
+      ];
 }
 
 class SelectChoice extends QuestionEvent {
@@ -73,10 +101,6 @@ class RoundComplete extends QuestionEvent {
         winner,
         isWinner,
       ];
-}
-
-class NextRound extends QuestionEvent {
-  const NextRound();
 }
 
 class GameComplete extends QuestionEvent {
