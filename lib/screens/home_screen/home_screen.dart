@@ -29,9 +29,6 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const GenericText('Max Trivia!'),
-          const Text(
-            'Version 1.0.0',
-          ),
           ScreenButton(
             onPressed: () {
               newScreen(
