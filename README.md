@@ -14,6 +14,10 @@ The game is started by a host, and then guests can join the game. When the game 
 
 ### New game
 
+| <img src="docs/images/home.png" style="width:135px" /> | <img src="docs/images/host_game.jpg" style="width:135px" /> | <img src="docs/images/join_game.png" style="width:135px" /> |
+|:--:|:--:|:--:|
+| Home screen | Host game | Join game |
+
 Here is how to start a new game:
 
 1. Host clicks *Host* button.
@@ -28,11 +32,19 @@ As players join the game, their names will be displayed for all players, so the 
 
 ### Play game
 
+| <img src="docs/images/ready.png" style="width:135px" /> | <img src="docs/images/waiting_for_host.png" style="width:135px" /> | <img src="docs/images/ready_to_select.png" style="width:135px" /> |
+|:--:|:--:|:--:|
+| Host can start game | Waiting for host | Playing |
+
 Go to this page for a flowchart describing playing the game:
 
 [Play flowchart](https://github.com/TheOmnimax/max-trivia/tree/main/play_flowchart.md)
 
 ## Answering a question
+
+| <img src="docs/images/correct.png" style="width:135px" /> | <img src="docs/images/incorrect.png" style="width:135px" /> | <img src="docs/images/someone_faster.png" style="width:135px" /> | <img src="docs/images/too_slow.png" style="width:135px" /> |
+|:--:|:--:|:--:|:--:|
+| Won round | Incorrect | Correct, but someone faster | Did not answer |
 
 When a player answers a question, it will show their choice in light green, and tell them to wait. When the round is over (either because a player selected the right choice, or everyone selected the wrong choice). Depending on the result, the player will get a different message, and a different color:
 
@@ -42,6 +54,10 @@ When a player answers a question, it will show their choice in light green, and 
 * If they did not select a choice, the correct choice will turn gray.
 
 ## End game
+
+| <img src="docs/images/results.png" style="width:135px" /> |
+|:--:|
+| Results |
 
 When the game is over, it will display the results, including all scores, and the winner (or winners if there was a tie for first).
 
