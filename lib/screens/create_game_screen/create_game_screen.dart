@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
 import 'package:max_trivia/screens/create_game_screen/bloc/create_game_bloc.dart';
 import 'package:max_trivia/screens/question_screen/question_screen.dart';
+import 'package:max_trivia/shared_widgets/buttons.dart';
 import 'package:max_trivia/shared_widgets/form_input.dart';
 import 'package:max_trivia/shared_widgets/loading.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
@@ -38,10 +39,8 @@ class _CreateGameMainState extends State<CreateGameMain> {
     bool loading = false;
 
     void stopLoading() {
-      print('Loading: $loading');
       if (loading) {
         loading = false;
-        print('Popping');
         Navigator.pop(context);
       }
     }
@@ -80,30 +79,28 @@ class _CreateGameMainState extends State<CreateGameMain> {
                   }
                 },
               ),
-              ConfirmButton(
-                  onPressed: () async {
-                    createKey.currentState!.validate();
-                    if (playerName != '') {
-                      context.read<CreateGameBloc>().add(
-                            CreateGame(
-                              numRounds: 5, // NUMBER OF ROUNDS
-                              categories: ['19g8pnv6jujxzli9'],
-                              playerName: playerName,
-                            ),
-                          );
-                      print('Loading');
-                      loading = true;
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return LoadingDialog(context: context);
-                          });
-                    } else {
-                      // print('Invalid');
-                    }
-                  },
-                  label: 'Create'),
+              ScreenButton(
+                onPressed: () async {
+                  createKey.currentState!.validate();
+                  if (playerName != '') {
+                    context.read<CreateGameBloc>().add(
+                          CreateGame(
+                            numRounds: 5, // NUMBER OF ROUNDS
+                            categories: const ['19g8pnv6jujxzli9'],
+                            playerName: playerName,
+                          ),
+                        );
+                    loading = true;
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return LoadingDialog(context: context);
+                        });
+                  }
+                },
+                label: 'Create',
+              ),
             ],
           ),
         ),

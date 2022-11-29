@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
-import 'package:max_trivia/utils/http.dart';
 
 part 'join_game_event.dart';
 part 'join_game_state.dart';
@@ -22,8 +20,8 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
   final AppBloc appBloc;
 
   Future _joinGame(JoinGame event, Emitter<JoinGameState> emit) async {
-    print('Joining...');
     emit(const JoiningState());
+    final roomCode = event.roomCode.toLowerCase();
     var noResponse = true;
     appBloc.socket.on('add-player', (data) {
       noResponse = false;
@@ -32,7 +30,7 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
         final playerId = data['player_id'] as String;
         add(
           JoinSuccess(
-            roomCode: event.roomCode,
+            roomCode: roomCode,
             playerId: playerId,
             playerName: event.name,
           ),
@@ -49,13 +47,12 @@ class JoinGameBloc extends Bloc<JoinGameEvent, JoinGameState> {
       }
     });
     appBloc.socket.emit('add-player', {
-      'room_code': event.roomCode,
+      'room_code': roomCode,
       'player_name': event.name,
     });
 
     Future.delayed(const Duration(seconds: 5), () {
       if (noResponse) {
-        print('Timed out');
         add(const JoinError(joinStatus: JoinStatus.timedOut));
       }
     });

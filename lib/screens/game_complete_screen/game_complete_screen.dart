@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/screens/game_complete_screen/bloc/game_complete_bloc.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
-import 'package:max_trivia/utils/navigation.dart';
 
 class GameCompleteScreen extends StatelessWidget {
   const GameCompleteScreen({
@@ -12,7 +11,6 @@ class GameCompleteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('On game complete screen');
     return BlocProvider(
       create: (context) => GameCompleteBloc(
         appBloc: context.read<AppBloc>(),
@@ -33,12 +31,12 @@ class GameCompleteMain extends StatelessWidget {
         child: BlocBuilder<GameCompleteBloc, GameCompleteState>(
       builder: (BuildContext context, state) {
         if (state is LoadingState) {
-          return Text('Loading, please wait...');
+          return const Text('Loading, please wait...');
         } else if (state is ResultsState) {
           final winners = state.winners;
 
-          if (winners.length == 0) {
-            return Text('There were no winners! You guys stink.');
+          if (winners.isEmpty) {
+            return const GenericText('There were no winners! You guys stink.');
           } else {
             List<Widget> winnerRows = <Widget>[];
             final scores = state.scores;

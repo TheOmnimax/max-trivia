@@ -7,6 +7,8 @@ import 'package:max_trivia/shared_widgets/form_input.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
 
 import 'package:max_trivia/utils/navigation.dart';
+import 'package:max_trivia/utils/text_tools.dart';
+import '../../shared_widgets/buttons.dart';
 import '../../shared_widgets/loading.dart';
 import 'bloc/join_game_bloc.dart';
 
@@ -16,7 +18,7 @@ class JoinGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      child: JoinGameMain(),
+      child: const JoinGameMain(),
       create: (context) => JoinGameBloc(appBloc: context.read<AppBloc>()),
     );
   }
@@ -38,10 +40,8 @@ class _JoinGameMainState extends State<JoinGameMain> {
     final joinKey = GlobalKey<FormState>();
 
     void stopLoading() {
-      print('Loading: $loading');
       if (loading) {
         loading = false;
-        print('Popping');
         Navigator.pop(context);
       }
     }
@@ -81,6 +81,9 @@ class _JoinGameMainState extends State<JoinGameMain> {
                 },
               ),
               TextInput(
+                inputFormatters: [
+                  UppercaseFormatter(),
+                ],
                 label: 'Room code',
                 onChanged: (String value) {
                   roomCode = value;
@@ -91,7 +94,6 @@ class _JoinGameMainState extends State<JoinGameMain> {
                     return 'Room code cannot be blank!';
                   } else {
                     final joinGameState = context.read<JoinGameBloc>().state;
-                    print(joinGameState.joinStatus);
                     final joinStatus = joinGameState.joinStatus;
                     if (joinGameState.joinStatus == JoinStatus.roomNotExists) {
                       stopLoading();
@@ -106,7 +108,7 @@ class _JoinGameMainState extends State<JoinGameMain> {
                   }
                 },
               ),
-              ConfirmButton(
+              ScreenButton(
                 onPressed: () async {
                   joinKey.currentState!.validate();
                   if (!((name == '') || (roomCode == ''))) {
