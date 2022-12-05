@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 part 'app_event.dart';
 part 'app_state.dart';
@@ -25,6 +26,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final socket = IO.io(
+    baseUrl,
+    IO.OptionBuilder()
+        .setTransports(['websocket']) // for Flutter or Dart VM
+        .disableAutoConnect() // disable auto-connection
+        .build(),
+  );
 
   Future<String> get authToken async {
     final user = _auth.currentUser;
@@ -40,10 +48,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     ));
   }
 
-  Future _appOpened(AppOpened event, Emitter<AppState> emit) async {
-    final currentUser = _auth.currentUser;
-    final username = currentUser?.email ?? '';
-    // emit(state.copyWith());
+  void _appOpened(AppOpened event, Emitter<AppState> emit) {
+    // final currentUser = _auth.currentUser;
+    // final username = currentUser?.email ?? '';
+    socket.connect();
   }
 
   LoginResult? checkCredentials({

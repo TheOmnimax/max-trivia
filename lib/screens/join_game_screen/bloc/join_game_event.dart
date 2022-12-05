@@ -22,3 +22,33 @@ class JoinGame extends JoinGameEvent {
         roomCode,
       ];
 }
+
+class JoinError extends JoinGameEvent {
+  const JoinError({
+    required this.joinStatus,
+  });
+
+  final JoinStatus joinStatus;
+
+  @override
+  List<Object?> get props => [joinStatus];
+}
+
+class JoinSuccess extends JoinGameEvent {
+  const JoinSuccess({
+    required this.roomCode,
+    required this.playerId,
+    required this.playerName,
+  });
+
+  final String roomCode;
+  final String playerId;
+  final String playerName;
+
+  @override
+  List<Object?> get props => [
+        roomCode,
+        playerId,
+        playerName,
+      ];
+}

@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
+import 'package:max_trivia/screens/game_complete_screen/game_complete_screen.dart';
 import 'package:max_trivia/screens/question_screen/bloc/question_bloc.dart';
+import 'package:max_trivia/shared_widgets/buttons.dart';
+import 'package:max_trivia/shared_widgets/shared_widgets.dart';
+import 'package:max_trivia/utils/navigation.dart';
+
+import '../../shared_widgets/loading.dart';
 
 part 'choice_widget.dart';
 
@@ -29,6 +35,7 @@ class QuestionScreenMain extends StatelessWidget {
     required Function(int) onSelected,
     int selected = -1,
     int correct = -1,
+    bool winner = false,
   }) {
     final choiceWidgets = <ChoiceWidget>[];
 
@@ -43,6 +50,7 @@ class QuestionScreenMain extends StatelessWidget {
           choiceValue: c,
           selected: selected,
           correct: correct,
+          winner: winner,
         ),
       );
     }
@@ -52,79 +60,125 @@ class QuestionScreenMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: BlocConsumer<QuestionBloc, QuestionState>(
-          listener: (context, state) {
-            if (state is GameCompleteState) {
-              Navigator.popAndPushNamed(context, '/game-complete');
-            }
-          },
-          builder: (context, state) {
-            if (state is LoadingState) {
-              return const Text('Loading...');
-            } else if (state is PregameState) {
-              if (state.roundStatus == RoundStatus.answered) {
-                if (context.read<AppBloc>().state.isHost) {
-                  return Column(
-                    children: [
-                      Text(
-                          'Room code: ${context.read<AppBloc>().state.roomCode}'),
-                      TextButton(
-                          onPressed: () {
-                            context.read<QuestionBloc>().add(
-                                  const StartGame(),
-                                );
-                          },
-                          child: const Text('Start')),
-                    ],
-                  );
-                } else {
-                  return const Text('Please wait for host to start game...');
-                }
-              }
-              if (state.roundStatus == RoundStatus.ready) {
-                return const Text('About to start, get ready...');
-              } else {
-                return Text('Invalid round status: ${state.roundStatus}');
-              }
-            } else if (state is PlayingState) {
-              return Column(
-                children: [
-                  Container(
-                    child: Text(state.question),
-                  ),
-                  Column(
-                    children: _getChoiceWidgets(
-                      choices: state.choices,
-                      onSelected: (int value) {
-                        context
-                            .read<QuestionBloc>()
-                            .add(SelectChoice(selected: value));
-                      },
-                      selected: state.selected,
-                      correct: state.correct,
+    return DefaultScaffold(
+      child: BlocConsumer<QuestionBloc, QuestionState>(
+        listener: (context, state) {
+          if (state is GameCompleteState) {
+            newScreen(
+              context: context,
+              screen: const GameCompleteScreen(),
+            );
+          } else if (state is LoadingState) {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return LoadingDialog(context: context);
+                });
+          }
+        },
+        builder: (context, state) {
+          if (state is LoadingState) {
+            return Container();
+          } else if (state is PregameState) {
+            if (state.roundStatus == RoundStatus.answered) {
+              if (context.read<AppBloc>().state.isHost) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Room code: '),
+                        SelectableText(
+                          context.read<AppBloc>().state.roomCode.toUpperCase(),
+                        ),
+                      ],
                     ),
-                  ),
-                  Builder(builder: (context) {
-                    if (state.roundStatus == RoundStatus.answered) {
-                      return Text(
-                          'Please wait for the other players to finish up...');
-                    } else if (state.roundStatus == RoundStatus.ready) {
-                      return Text('Please wait for next round...');
-                    } else {
-                      return Text('');
-                    }
-                  }),
-                ],
-              );
-            } else if (state is GameCompleteState) {
-              return Text('Please wait for results...');
+                    ScreenButton(
+                      onPressed: () {
+                        context.read<QuestionBloc>().add(
+                              const StartGame(),
+                            );
+                      },
+                      label: 'Start',
+                    ),
+                    Text('Players: ${state.players.join(', ')}'),
+                  ],
+                );
+              } else {
+                return GenericText(
+                  'Please wait for host to start game...',
+                  addLabels: ['Players: ${state.players.join(', ')}'],
+                );
+              }
+            } else if (state.roundStatus == RoundStatus.ready) {
+              return const GenericText('About to start, get ready...');
             } else {
-              return Text('Invalid state: $state');
+              return Text('Invalid round status: ${state.roundStatus}');
             }
-          },
-        ),
+          } else if (state is PlayingState) {
+            return Column(
+              children: [
+                Text(state.question),
+                Column(
+                  children: _getChoiceWidgets(
+                    choices: state.choices,
+                    onSelected: (int value) {
+                      context
+                          .read<QuestionBloc>()
+                          .add(SelectChoice(selected: value));
+                    },
+                    selected: state.selected,
+                    correct: state.correct,
+                    winner: state.answerStatus == AnswerStatus.winner,
+                  ),
+                ),
+                Builder(builder: (context) {
+                  if (state.roundStatus == RoundStatus.answered) {
+                    switch (state.answerStatus) {
+                      case AnswerStatus.waiting:
+                        {
+                          return const GenericText('Waiting for results...');
+                        }
+                      case AnswerStatus.answered:
+                        {
+                          return const GenericText(
+                              'Please wait for the other players to finish up...');
+                        }
+                      case AnswerStatus.noAnswer:
+                        {
+                          return const GenericText('Round complete');
+                        }
+                      case AnswerStatus.winner:
+                        {
+                          return const GenericText('Winner!');
+                        }
+                      case AnswerStatus.correct:
+                        {
+                          return const GenericText(
+                              'Correct, but someone else was faster!');
+                        }
+                      case AnswerStatus.incorrect:
+                        {
+                          return const GenericText('Incorrect!');
+                        }
+                      default:
+                        {
+                          return const GenericText(
+                              'Unknown status when answered');
+                        }
+                    }
+                  } else {
+                    return const Text('');
+                  }
+                }),
+              ],
+            );
+          } else if (state is GameCompleteState) {
+            return const Text('Please wait for results...');
+          } else {
+            return Text('Invalid state on question screen: $state');
+          }
+        },
       ),
     );
   }

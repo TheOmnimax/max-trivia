@@ -38,7 +38,7 @@ class JoiningState extends JoinGameState {
 
   @override
   JoiningState copyWith() {
-    return JoiningState();
+    return const JoiningState();
   }
 }
 
@@ -71,19 +71,3 @@ class LoadingState extends JoinGameState {
     );
   }
 }
-//
-// class StartGameState extends JoinGameState {
-//   const StartGameState({
-//     required JoinStatus joinStatus,
-//   }) : super(
-//           joinStatus: joinStatus,
-//         );
-//
-//   @override
-//   StartGameState copyWith({
-//     JoinStatus? joinStatus,
-//   }) {
-//     // TODO: implement copyWith
-//     return StartGameState(joinStatus: joinStatus ?? this.joinStatus);
-//   }
-// }

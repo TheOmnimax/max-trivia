@@ -14,7 +14,7 @@ class GameCompleteScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => GameCompleteBloc(
         appBloc: context.read<AppBloc>(),
-      )..add(GetResults()),
+      )..add(const GetResults()),
       child: const GameCompleteMain(),
     );
   }
@@ -31,12 +31,12 @@ class GameCompleteMain extends StatelessWidget {
         child: BlocBuilder<GameCompleteBloc, GameCompleteState>(
       builder: (BuildContext context, state) {
         if (state is LoadingState) {
-          return Container();
+          return const Text('Loading, please wait...');
         } else if (state is ResultsState) {
           final winners = state.winners;
 
-          if (winners.length == 0) {
-            return Text('There were no winners! You guys stink.');
+          if (winners.isEmpty) {
+            return const GenericText('There were no winners! You guys stink.');
           } else {
             List<Widget> winnerRows = <Widget>[];
             final scores = state.scores;
@@ -55,7 +55,7 @@ class GameCompleteMain extends StatelessWidget {
             );
           }
         } else {
-          return Text('Invalid state: $state');
+          return Text('Invalid state on results screen: $state');
         }
       },
     ));

@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:max_trivia/bloc/app_bloc.dart';
 import 'package:max_trivia/constants/constants.dart';
+import 'package:max_trivia/screens/question_screen/question_screen.dart';
 import 'package:max_trivia/shared_widgets/form_input.dart';
 import 'package:max_trivia/shared_widgets/shared_widgets.dart';
 
+import 'package:max_trivia/utils/navigation.dart';
+import 'package:max_trivia/utils/text_tools.dart';
+import '../../shared_widgets/buttons.dart';
+import '../../shared_widgets/loading.dart';
 import 'bloc/join_game_bloc.dart';
 
 class JoinGameScreen extends StatelessWidget {
@@ -13,8 +18,8 @@ class JoinGameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      child: JoinGameMain(),
-      create: (context) => JoinGameBloc(),
+      child: const JoinGameMain(),
+      create: (context) => JoinGameBloc(appBloc: context.read<AppBloc>()),
     );
   }
 }
@@ -31,11 +36,19 @@ class _JoinGameMainState extends State<JoinGameMain> {
   Widget build(BuildContext context) {
     String name = '';
     String roomCode = '';
-    final nameKey = GlobalKey<FormState>();
+    bool loading = false; // TODO: QUESTION Is this the best way to do this?
+    final joinKey = GlobalKey<FormState>();
+
+    void stopLoading() {
+      if (loading) {
+        loading = false;
+        Navigator.pop(context);
+      }
+    }
 
     return BlocListener<JoinGameBloc, JoinGameState>(
       listener: (context, state) {
-        nameKey.currentState!.validate();
+        joinKey.currentState!.validate();
         if (state is LoadingState) {
           context.read<AppBloc>().add(
                 AddGameInfo(
@@ -45,12 +58,15 @@ class _JoinGameMainState extends State<JoinGameMain> {
                   isHost: false,
                 ),
               );
-          Navigator.pushNamed(context, '/question-screen');
+          newScreen(
+            context: context,
+            screen: const QuestionScreen(),
+          );
         }
       },
       child: DefaultScaffold(
         child: Form(
-          key: nameKey,
+          key: joinKey,
           child: Column(
             children: [
               TextInput(
@@ -65,30 +81,51 @@ class _JoinGameMainState extends State<JoinGameMain> {
                 },
               ),
               TextInput(
+                inputFormatters: [
+                  UppercaseFormatter(),
+                ],
                 label: 'Room code',
                 onChanged: (String value) {
                   roomCode = value;
                 },
                 validator: (String? value) {
                   if (value == '') {
+                    stopLoading();
                     return 'Room code cannot be blank!';
                   } else {
                     final joinGameState = context.read<JoinGameBloc>().state;
+                    final joinStatus = joinGameState.joinStatus;
                     if (joinGameState.joinStatus == JoinStatus.roomNotExists) {
+                      stopLoading();
                       return 'Room not found';
+                    } else if (joinStatus == JoinStatus.timedOut) {
+                      stopLoading();
+                      return 'Timed out. Please try again.';
+                    } else if (joinStatus == JoinStatus.unknown) {
+                      stopLoading();
+                      return 'Unknown error. Please try again.';
                     }
                   }
                 },
               ),
-              ConfirmButton(
-                onPressed: () {
-                  context.read<JoinGameBloc>().add(
-                        JoinGame(
-                          name: name,
-                          roomCode: roomCode,
-                        ),
-                      );
-                  if (nameKey.currentState!.validate()) {}
+              ScreenButton(
+                onPressed: () async {
+                  joinKey.currentState!.validate();
+                  if (!((name == '') || (roomCode == ''))) {
+                    context.read<JoinGameBloc>().add(
+                          JoinGame(
+                            name: name,
+                            roomCode: roomCode,
+                          ),
+                        );
+                    loading = true;
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return LoadingDialog(context: context);
+                        });
+                  }
                 },
                 label: 'Join',
               ),

@@ -12,28 +12,49 @@ class DefaultScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: child,
+        backgroundColor: const Color.fromARGB(100, 211, 228, 242),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              // color: Color.fromARGB(100, 174, 211, 242),
+              constraints: const BoxConstraints(
+                maxWidth: 400,
+              ),
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.all(0),
+                child: child,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
-// class JoinStatusDisplay extends StatelessWidget {
-//   const JoinStatusDisplay({
-//     required this.joinStatus,
-//     Key? key,
-//   }) : super(key: key);
-//
-//   final JoinStatus joinStatus;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     if (joinStatus == JoinStatus.none) {
-//       return Text('');
-//     }
-//     final String errorText;
-//     if (joinStatus == JoinStatus.noName) {
-//       errorText = 'Please '
-//     }
-//   }
-// }
+class GenericText extends StatelessWidget {
+  const GenericText(
+    this.label, {
+    this.addLabels = const <String>[],
+    Key? key,
+  }) : super(key: key);
+
+  final String label;
+  final List<String> addLabels;
+
+  @override
+  Widget build(BuildContext context) {
+    final textWidgets = <Widget>[Text(label)];
+
+    for (final l in addLabels) {
+      textWidgets.add(Text(l));
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: textWidgets,
+    );
+  }
+}
